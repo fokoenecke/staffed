@@ -1,0 +1,25 @@
+<div id="login">
+	{% if not user.is_authenticated %}
+		<a href="#" class="button" id="login_button"><span>Login</span><em></em></a>
+		<div style="clear:both"></div>
+		<div id="login_box">                
+			<form id="login_form" method="post">
+				<div id="login_fields">
+					{% csrf_token %}
+					{% for field in form %}
+						<div class="fieldWrapper">
+							{{field.label_tag}}:{{ field }}
+						</div>
+					{% endfor %}
+				</div>
+				<div>
+					<input style="float:right;" type="submit" value="Login"/>
+					<div id="error"><span></span></div>
+				</div>
+			</form>
+		</div>
+	{% else %}
+		<a href="#" class="button" id="logout_button"><span>Logout</span><em></em></a>
+		<div style="clear:both"></div>
+	{% endif%}
+</div>
