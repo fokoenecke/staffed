@@ -1,4 +1,5 @@
 # Django settings for staffed project.
+from django.conf.global_settings import AUTH_USER_MODEL
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
@@ -155,3 +156,5 @@ LOGGING = {
         },
     }
 }
+
+AUTH_PROFILE_MODULE = 'core.UserProfile'

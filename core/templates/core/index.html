@@ -2,5 +2,17 @@
 {% block content %}
 	<div id="hello">
 		<span>Hello World2!</span>
+		<div id="profile_box">                
+			<form id="profile_form" method="post">
+				<div id="profile_fields">
+					{% csrf_token %}
+					{% for field in profile_form %}
+						<div class="fieldWrapper">
+							{{field.label_tag}}:{{ field }}
+						</div>
+					{% endfor %}
+				</div>
+			</form>
+		</div>
 	</div>
 {% endblock %}
