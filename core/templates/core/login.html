@@ -1,12 +1,14 @@
 <div id="login">
 	{% if not user.is_authenticated %}
 		<a href="#" class="button" id="login_button"><span>Login</span><em></em></a>
+		<a href="/register" class="button" id="register_button"><span>Register</span><em></em></a>
+		
 		<div style="clear:both"></div>
 		<div id="login_box">                
 			<form id="login_form" method="post">
 				<div id="login_fields">
 					{% csrf_token %}
-					{% for field in form %}
+					{% for field in login_form %}
 						<div class="fieldWrapper">
 							{{field.label_tag}}:{{ field }}
 						</div>
@@ -19,6 +21,7 @@
 			</form>
 		</div>
 	{% else %}
+		<a href="/profile" class="button" id="profile_button"><span>Profile</span><em></em></a>
 		<a href="#" class="button" id="logout_button"><span>Logout</span><em></em></a>
 		<div style="clear:both"></div>
 	{% endif%}

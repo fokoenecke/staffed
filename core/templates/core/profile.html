@@ -1,0 +1,22 @@
+{% extends "core/base.html" %}
+{% block content %}
+	<div id="hello">
+		<div id="profile_box">    
+			{{ user.username }}            
+			<form id="profile_form" method="post">
+				<div id="profile_fields">
+					{% csrf_token %}
+					{% for field in profile_form %}
+						<div class="fieldWrapper">
+							{{field.label_tag}}:{{ field }}
+						</div>
+					{% endfor %}
+				</div>
+				<div>
+					<input style="float:right;" type="submit" value="save"/>
+					<div id="error"><span></span></div>
+				</div>
+			</form>
+		</div>
+	</div>
+{% endblock %}

@@ -14,11 +14,30 @@ $.ajaxSetup({
 
 $('#login_form').submit(function(){
 	$('#error').hide();
-	console.log("test");
     $.ajax({
         type:"POST",
         url:"/login/ajax_login/",
         data:$('#login_form').serialize(),
+        success: function(msg){
+			if (msg.error) {
+				$('#error').text(msg.error);
+				$('#error').show();
+			}
+            if (msg.return === 'true') {
+				window.location.reload();
+			}
+        }
+    });
+	return false;
+});
+
+$('#profile_form').submit(function(){
+	console.log("test");
+	$('#error').hide();
+    $.ajax({
+        type:"POST",
+        url:"/save_profile/",
+        data:$('#profile_form').serialize(),
         success: function(msg){
 			if (msg.error) {
 				$('#error').text(msg.error);

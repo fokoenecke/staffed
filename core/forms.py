@@ -2,7 +2,6 @@ from core.models import UserProfile
 from django import forms
 from django.contrib.auth.models import User
 
-#in forms.py
 class UserForm(forms.ModelForm):
     class Meta:
         model = User
@@ -11,3 +10,4 @@ class UserForm(forms.ModelForm):
 class UserProfileForm(forms.ModelForm):
     class Meta:
         model = UserProfile
+        fields = ["matriculation_nr", "first_name", "last_name", "studies"]
