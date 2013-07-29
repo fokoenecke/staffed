@@ -1,11 +1,14 @@
 from core.forms import UserProfileForm
+from core.models import Skill
 from django import forms
 from django.contrib.auth import login, logout
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.http import HttpResponse, HttpResponseRedirect
+from django.http.request import QueryDict
 from django.shortcuts import render
 from django.utils import simplejson
 from django.views.decorators.csrf import ensure_csrf_cookie
+import json
 import logging
 
 #TODO: Context_Processor login_form erstellen, damit nicht in jeder view die Login_Form uebergeben werden muss
@@ -52,8 +55,13 @@ def profile(request):
     if request.user.is_authenticated():
         data = {}
         user_profile = request.user.profile
+        skillset = user_profile.skillset
+        
         data['profile_form'] = UserProfileForm(instance=user_profile)
         data['login_form'] = AuthenticationForm()
+        data['skill_list'] = Skill.objects.all()
+        data['skillset'] = [skillset.skill1, skillset.skill2, skillset.skill3, skillset.skill4, skillset.skill5]
+        
         print user_profile
         return render(request, 'core/profile.html', data)
     else:
@@ -91,3 +99,31 @@ def register(request):
         form = UserCreationForm()
         
     return render(request, "core/register.html", {'form': form, 'login_form' : login_form, })
+
+@ensure_csrf_cookie
+def assign_skill_to_skillset(request):
+    jsn = simplejson.loads(request.body)
+    logger = logging.getLogger("django")
+
+    skill_id = jsn['id']
+    slot_nr = jsn['slot_nr']
+    skill = Skill.objects.get(pk=skill_id)
+    skillset = request.user.profile.skillset
+    
+    if slot_nr == 0:
+        skillset.skill1 = skill
+    elif slot_nr== 1:
+        skillset.skill2 = skill
+    elif slot_nr == 2:
+        skillset.skill3 = skill
+    elif slot_nr == 3:
+        skillset.skill4 = skill
+    elif slot_nr == 4:
+        skillset.skill5 = skill
+             
+    skillset.save()
+    some_data = {'return': 'true'}
+    data = simplejson.dumps(some_data)
+    
+    return HttpResponse(data, mimetype='application/json')
+    

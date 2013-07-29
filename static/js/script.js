@@ -62,10 +62,27 @@ function ajax_logout(){
     }); 
 }
 
+function ajax_assign_skill( event, ui ){
+	var skill = new Object;
+	skill.id = ui.draggable.data( 'id' );
+	skill.slot_nr = $(this).data( 'number' );
+	
+	var jsonString = JSON.stringify(skill)
+	$.ajax({
+		type:"POST",
+		url:"/profile/assign_skill/",
+		data:jsonString
+	});
+}
+
 $('#logout_button').click(function(){ 
 	ajax_logout();
 	return false;
 });
+
+function testDrop(){
+	alert("Test");
+}
 
 $(function() {
     var button = $('#login_button');
@@ -85,4 +102,14 @@ $(function() {
             box.hide();
         }
     });
+    $( "img", $("#skills") ).draggable({ revert: true, helper: "clone" });
+    
+    var words = ['0', '1', '2', '3', '4'];
+    for ( var i=0; i<5; i++ ) {
+        $('#skillset_skill'+words[i]).droppable( {
+            accept: $( "img", $({% for i in 3|get_range %"#skills")),
+            hoverClass: 'hovered',
+            drop: ajax_assign_skill
+        });
+    }    
 });

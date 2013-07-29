@@ -14,7 +14,7 @@ body {
 
 #hello {
 	width: 100%;
-	min-height: 200px;
+	min-height: 400px;
 	background-color: #83C2F2;
 }
 
@@ -86,4 +86,39 @@ body {
 
 #logout_box {
 	float: right;
+}
+
+#skills {
+	display:block;
+	margin-top: 25px;
+	clear: both;
+	float: left;
+}
+
+ 
+#skillSlots div {
+  float: left;
+  width: 58px;
+  height: 78px;
+  padding: 10px;
+  padding-top: 40px;
+  padding-bottom: 0;
+  border: 2px solid #333;
+  -moz-border-radius: 10px;
+  -webkit-border-radius: 10px;
+  border-radius: 10px;
+  margin: 0 0 0 10px;
+  background: #fff;
+}
+ 
+#skillSlots div:first-child, #cardPile div:first-child {
+  margin-left: 0;
+}
+ 
+#skillSlots div.hovered {
+  background: #aaa;
+}
+ 
+#skillSlots div {
+  border-style: dashed;
 }

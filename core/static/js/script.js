@@ -62,10 +62,37 @@ function ajax_logout(){
     }); 
 }
 
+function ajax_assign_skill( event, ui ){
+	var skill = new Object;
+	skill.id = ui.draggable.data( 'id' );
+	skill.slot_nr = $(this).data( 'number' );
+	
+	
+	var jsonString = JSON.stringify(skill)
+	$.ajax({
+		type:"POST",
+		url:"/profile/assign_skill/",
+		data:jsonString
+	});
+	
+    var $img = $(this).find('img'); 
+    $(this).html(ui.draggable.data( 'name' ));
+    $(this).append($img);
+	
+	console.log(ui.draggable.attr('src'));
+	console.log($(this).find('img'));
+	$(this).find('img').attr('src', ui.draggable.attr('src'));
+	
+}
+
 $('#logout_button').click(function(){ 
 	ajax_logout();
 	return false;
 });
+
+function testDrop(){
+	alert("Test");
+}
 
 $(function() {
     var button = $('#login_button');
@@ -85,4 +112,13 @@ $(function() {
             box.hide();
         }
     });
+    $( "img", $("#skills") ).draggable({ revert: true, helper: "clone" });
+    
+    for ( var i=0; i<5; i++ ) {
+        $('#skillset_skill'+i).droppable( {
+            accept: $( "img", $("#skills")),
+            hoverClass: 'hovered',
+            drop: ajax_assign_skill
+        });
+    }    
 });
