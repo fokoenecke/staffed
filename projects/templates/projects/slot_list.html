@@ -1,0 +1,22 @@
+{% extends "core/base.html" %}
+{% block content %}
+	<div id="slot_list">
+		{% if slot_list %}
+		    <ul>
+		    
+			    {% load endless %}
+				{% paginate slot_list %}
+			    {% for slot in slot_list %}
+		        <a href="/projects/{{ slot.project.id }}/">
+		        	<li>
+		        		<div>{{slot.project.name}}</div>
+		        	</li>
+		        </a>
+				{% endfor %}
+				{% show_pages %}
+		    </ul>
+		{% else %}
+		    <p>No slots are available.</p>
+		{% endif %}
+	</div>
+{% endblock %}

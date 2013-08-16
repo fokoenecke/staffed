@@ -19,7 +19,7 @@ body {
 }
 
 #hello span {
-	color: lightblue;
+	color: DarkSlateGray;
 	margin: 5px;
 }
 
@@ -96,7 +96,11 @@ body {
 }
 
  
-#skillSlots div {
+.slot {
+	clear: both;
+}
+
+.slot div {
   float: left;
   width: 58px;
   height: 78px;
@@ -111,14 +115,65 @@ body {
   background: #fff;
 }
  
-#skillSlots div:first-child, #cardPile div:first-child {
+.slot div:first-child, #cardPile div:first-child {
   margin-left: 0;
 }
  
-#skillSlots div.hovered {
+.slot div.hovered {
   background: #aaa;
 }
  
-#skillSlots div {
+.slot div {
   border-style: dashed;
+}
+
+#skillset_color, .slot_color {
+	opacity: 0.7;
+	margin: 20px;
+	float: left;
+	height: 50px;
+	width: 50px;
+	border: 1px solid black;
+	border-radius: 15px;
+}
+
+
+#profile_list {
+	border: 1px solid black;
+	width: 500px;
+	margin: auto;
+}
+
+#profile_list ul {
+	padding: 0;
+	margin: 0;
+}
+
+#profile_list ul li {
+	margin: 20px;
+	list-style-type: none;
+	border: 1px solid black;	
+	padding: 5px;
+}
+
+a:link {color:black;}      /* unvisited link */
+a:visited {color:black;}  /* visited link */
+a:hover {color:black;}  /* mouse over link */
+a:active {color:black;}  /* selected link */
+
+.color_box {
+	height: 20px;
+	width: 20px;
+	margin: auto;
+	border: 1px solid black;
+	float: right;
+	opacity: 0.7;
+}
+
+#slots {
+	float: left;
+}
+
+#edit_project {
+	clear: both;
 }

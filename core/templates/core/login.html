@@ -4,7 +4,7 @@
 		<a href="/register" class="button" id="register_button"><span>Register</span><em></em></a>
 		
 		<div style="clear:both"></div>
-		<div id="login_box">                
+		<div id="login_box">            
 			<form id="login_form" method="post">
 				<div id="login_fields">
 					{% csrf_token %}
@@ -21,8 +21,11 @@
 			</form>
 		</div>
 	{% else %}
-		<a href="/profile" class="button" id="profile_button"><span>Profile</span><em></em></a>
+		<span>{{user.username}}</span>
 		<a href="#" class="button" id="logout_button"><span>Logout</span><em></em></a>
+		<a href="/profiles" class="button" id="profiles_button"><span>Profiles</span><em></em></a>
+		<a href="/profile" class="button" id="profile_button"><span>Profile</span><em></em></a>
+		<a href="/projects" class="button" id="projects_button"><span>Projects</span><em></em></a>
 		<div style="clear:both"></div>
 	{% endif%}
 </div>

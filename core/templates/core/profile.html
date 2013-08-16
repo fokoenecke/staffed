@@ -20,21 +20,28 @@
 						{% static "img/"|add:skill.image_name as skill_image %}
 						<img src="{{skill_image}}" alt="{{skill.name}}" data-id="{{skill.id}}" data-name="{{skill.name}}" />
 					{% endfor %}
-									
-					<div id="skillSlots">
-						{%for skill in skillset%}
+				</div>
+				<div id="skill_slots">
+					<div class="slot">
+						{% for skill in skillset.skills %}
 							{% if skill %}
-								<div id="skillset_skill{{forloop.counter0}}" data-number="{{skill.id}}">
+								<div id="skillset_skill{{forloop.counter0}}" data-number="{{skill.id}}" data-slot="{{forloop.counter0}}">
 									{{skill.name}}
 									{% static "img/"|add:skill.image_name as skill_image %}
 									<img src="{{skill_image}}" alt="{{skill.name}}" >
 								</div>
 							{% else %} 
-								<div id="skillset_skill{{forloop.counter0}}" data-number="0">Skill</div>
+								<div id="skillset_skill{{forloop.counter0}}" data-number="0" data-slot="{{forloop.counter0}}">
+									Skill
+									{% static "img/open.png" as skill_image %}
+									<img src="{{skill_image}}" alt="open" >
+								</div>
 							{% endif %}
 						{% endfor %}
-					</div> 
+					</div>
 				</div>
+				<div id="skillset_color" data-color="{{skillset.color}}"></div>
+
 				<div>
 					<input style="float:right; clear:both;" type="submit" value="save"/>
 					<div id="error"><span></span></div>

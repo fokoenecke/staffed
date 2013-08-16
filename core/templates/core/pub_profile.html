@@ -1,0 +1,31 @@
+{% extends "core/base.html" %}
+{% block content %}
+	<div id="hello">
+		<div id="profile_box">
+			<div id="profile_info">
+				<span>Username : {{profile.user.username}}</span><br \>       
+				<span>Vorname: {{profile.first_name}}</span><br \>
+				<span>Nachname: {{profile.last_name}}</span><br \>
+				<span>studiert: {{profile.studies}}</span><br \>
+				
+			</div>
+				Skillset: <br \>
+				{% load static %}									
+				<div id="skillSlots">
+					{%for skill in skillset%}
+						{% if skill %}
+							<div id="skillset_skill{{forloop.counter0}}" data-number="{{skill.id}}">
+								{{skill.name}}
+								{% static "img/"|add:skill.image_name as skill_image %}
+								<img src="{{skill_image}}" alt="{{skill.name}}" >
+							</div>
+						{% else %} 
+							<div id="skillset_skill{{forloop.counter0}}" data-number="0">Skill</div>
+						{% endif %}
+					{% endfor %}
+				</div>
+				<div id="skillset_color" data-color="{{skillset_color}}"></div> 
+			</form>
+		</div>
+	</div>
+{% endblock %}

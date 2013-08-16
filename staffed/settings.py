@@ -121,7 +121,10 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'endless_pagination',
+    'widget_tweaks',
     'core',
+    'projects',
     # Uncomment the next line to enable the admin:
     'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
@@ -158,3 +161,9 @@ LOGGING = {
 }
 
 AUTH_PROFILE_MODULE = 'core.UserProfile'
+
+from django.conf.global_settings import TEMPLATE_CONTEXT_PROCESSORS
+TEMPLATE_CONTEXT_PROCESSORS += (
+    'django.core.context_processors.request',
+    'core.processors.login_form',
+)

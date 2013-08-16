@@ -1,0 +1,46 @@
+{% extends "core/base.html" %}
+{% block content %}
+	<div id="hello">
+		<div id="project_box">
+			<div id="project_info">
+				<span>Owner : 		        
+				<a href="/profile/{{ project.owner.id }}/">
+	        		{{project.owner.user.username}}
+	        	</a></span><br \>       
+				<span>Name: {{project.name}}</span><br \>
+				<span>Start: {{project.start_date}}</span><br \>
+				<span>Ende: {{project.end_date}}</span><br \>
+			</div>
+		</div>
+		<div id='slots'>
+			{% load static %}
+			{% for slot in project.slots %}
+				<div class='slot' data-id='{{slot.id}}'>
+					{% for skill in slot.skillset.skills %}
+						{% if skill %}
+							<div class='skill' data-id='{{skill.id}}' data-nr='{{forloop.counter0}}'>
+								{% static "img/"|add:skill.image_name as skill_image %}
+								<img src="{{skill_image}}" alt="{{skill.name}}" data-id="{{skill.id}}" data-name="{{skill.name}}" />
+							</div>
+						{% else %}
+							<div class='skill' data-id='0' data-nr='{{forloop.counter0}}'>
+								Skill
+								{% static "img/open.png" as skill_image %}
+								<img src="{{skill_image}}" alt="open" >
+							</div>
+						{% endif %}
+					{% endfor %}
+					<div class="slot_color" data-color="{{slot.skillset.color}}"></div>
+				</div>
+			{% endfor %}
+		</div>
+		
+		{% if project.owner.user == user %}
+			<div id="edit_project">
+				<a href="/projects/edit/{{project.id}}/">
+					edit project
+				</a>
+			</div>
+		{% endif %}
+	</div>
+{% endblock %}

@@ -1,0 +1,23 @@
+{% extends "core/base.html" %}
+{% block content %}
+	<div id="project_list">
+		<a href="/projects/add/"><span>add Project</a>
+		{% if project_list %}
+		    <ul>
+		    
+			    {% load endless %}
+				{% paginate project_list %}
+			    {% for project in project_list %}
+		        <a href="/projects/{{ project.id }}/">
+		        	<li>
+		        		<div>{{project.name}}</div>
+		        	</li>
+		        </a>
+				{% endfor %}
+				{% show_pages %}
+		    </ul>
+		{% else %}
+		    <p>No projects are available.</p>
+		{% endif %}
+	</div>
+{% endblock %}

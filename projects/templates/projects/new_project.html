@@ -1,0 +1,67 @@
+{% extends "core/base.html" %}
+{% block content %}
+	<div id="hello">
+		{%if project_form.instance.id %}
+			edit Project <br />
+			<a href='/projects/{{project_form.instance.id}}'>back to project</a>
+		{% else %}		
+			new Project		
+		{% endif %}
+		
+		<form id="project_form" {%if project_form.instance.id %}data-id={{project_form.instance.id}}{% endif %} method="post">
+			<div id="project_fields">
+				{% csrf_token %}
+				{% for field in project_form %}
+					<div class="fieldWrapper">
+						{{field.label_tag}}:{{ field }}
+					</div>
+				{% endfor %}
+			</div>
+			
+			{% load widget_tweaks %}
+			<!--{% render_field project_form.start_date class+="date" %}-->
+			<div>
+				<input style="float:right; clear:both;" type="submit" value="save"/>
+				<div id="error"><span></span></div>
+				<br \>
+			</div>
+		</form>
+		{% load static %}
+		<div id="skills">
+			{% for skill in skill_list %}
+				{% static "img/"|add:skill.image_name as skill_image %}
+				<img src="{{skill_image}}" alt="{{skill.name}}" data-id="{{skill.id}}" data-name="{{skill.name}}" />
+			{% endfor %}
+		</div>
+		<div style="clear:both"></div>
+								
+		<div id="slots">
+			Slots
+			{% static "img/add.png" as add_img %}
+						
+			<div id="add_slot">
+				<img src="{{add_img}}" alt="add" \>
+			</div>
+			
+			<div id="skill_slots">
+				{% for slot in project_form.instance.slots %}
+					<div class='slot' data-id='{{slot.id}}'>
+						{% for skill in slot.skillset.skills %}
+							{% if skill %}
+								<div class='skillset_slot' data-skill_id='{{skill.id}}' data-slot='{{forloop.counter0}}'>
+									{% static "img/"|add:skill.image_name as skill_image %}
+									<img src="{{skill_image}}" alt="{{skill.name}}" data-id="{{skill.id}}" data-name="{{skill.name}}" />
+								</div>
+							{% else %}
+								<div class='skillset_slot' data-skill_id='0' data-slot='{{forloop.counter0}}'>
+									{% static "img/open.png" as skill_image %}
+									<img src="{{skill_image}}" alt="open" >
+								</div>
+							{% endif %}
+						{% endfor %}
+					</div>
+				{% endfor %}
+			</div>
+		</div>
+	</div>
+{% endblock %}

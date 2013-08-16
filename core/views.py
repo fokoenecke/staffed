@@ -1,28 +1,17 @@
 from core.forms import UserProfileForm
-from core.models import Skill
-from django import forms
+from core.models import Skill, UserProfile
 from django.contrib.auth import login, logout
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.http import HttpResponse, HttpResponseRedirect
-from django.http.request import QueryDict
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.utils import simplejson
 from django.views.decorators.csrf import ensure_csrf_cookie
-import json
 import logging
-
-#TODO: Context_Processor login_form erstellen, damit nicht in jeder view die Login_Form uebergeben werden muss
 
 @ensure_csrf_cookie
 def index(request):
-    if request.method == 'POST': # If the form has been submitted...
-        login_form = AuthenticationForm(data=request.POST) # A form bound to the POST data
-        profile_form = UserProfileForm()
-    else:
-        login_form = AuthenticationForm() # An unbound form
-        profile_form = UserProfileForm()
-
-    return render(request, 'core/index.html', {'login_form': login_form, 'profile_form': profile_form})
+    profile_form = UserProfileForm()
+    return render(request, 'core/index.html', {'profile_form': profile_form})
 
 @ensure_csrf_cookie
 def ajax_login(request):
@@ -56,21 +45,35 @@ def profile(request):
         data = {}
         user_profile = request.user.profile
         skillset = user_profile.skillset
-        
+         
         data['profile_form'] = UserProfileForm(instance=user_profile)
-        data['login_form'] = AuthenticationForm()
         data['skill_list'] = Skill.objects.all()
-        data['skillset'] = [skillset.skill1, skillset.skill2, skillset.skill3, skillset.skill4, skillset.skill5]
+        data['skillset'] = skillset
         
         print user_profile
         return render(request, 'core/profile.html', data)
     else:
         return index(request)
-    
+
+
+@ensure_csrf_cookie
+def pub_profile(request, profile_id):
+    if request.user.is_authenticated():
+        profile = get_object_or_404(UserProfile, pk=profile_id)
+        skillset = profile.skillset
+        
+        data = {}        
+        data['profile'] = profile
+        data['skillset'] = [skillset.skill1, skillset.skill2, skillset.skill3, skillset.skill4, skillset.skill5]
+        data['skillset_color'] = skillset.color
+        
+        return render(request, 'core/pub_profile.html', data)
+    else:
+        return index(request)
 
 @ensure_csrf_cookie
 def save_profile(request):
-    logger = logging.getLogger("django") 
+    logger = logging.getLogger("django")
     some_data = {'return': 'false'}
     if request.method == 'POST':
         logger.error("test")
@@ -87,9 +90,16 @@ def save_profile(request):
     return HttpResponse(data, mimetype='application/json')
 
 @ensure_csrf_cookie
+def profile_list(request):
+    if request.user.is_authenticated():
+        profile_list = UserProfile.objects.all().select_related()
+        context = {'profile_list': profile_list}
+        return render(request, 'core/profile_list.html', context)
+    else:
+        return index(request)
+
+@ensure_csrf_cookie
 def register(request):
-    login_form = AuthenticationForm()
-    
     if request.method == 'POST':
         form = UserCreationForm(request.POST)
         if form.is_valid():
@@ -98,31 +108,23 @@ def register(request):
     else:
         form = UserCreationForm()
         
-    return render(request, "core/register.html", {'form': form, 'login_form' : login_form, })
+    return render(request, "core/register.html", {'form': form })
 
 @ensure_csrf_cookie
 def assign_skill_to_skillset(request):
     jsn = simplejson.loads(request.body)
     logger = logging.getLogger("django")
-
+    logger.error(jsn)
+    
     skill_id = jsn['id']
     slot_nr = jsn['slot_nr']
     skill = Skill.objects.get(pk=skill_id)
     skillset = request.user.profile.skillset
     
-    if slot_nr == 0:
-        skillset.skill1 = skill
-    elif slot_nr== 1:
-        skillset.skill2 = skill
-    elif slot_nr == 2:
-        skillset.skill3 = skill
-    elif slot_nr == 3:
-        skillset.skill4 = skill
-    elif slot_nr == 4:
-        skillset.skill5 = skill
-             
+    skillset.attach_skill(slot_nr, skill)           
     skillset.save()
-    some_data = {'return': 'true'}
+    
+    some_data = {'return': 'true', 'color': skillset.color}
     data = simplejson.dumps(some_data)
     
     return HttpResponse(data, mimetype='application/json')
