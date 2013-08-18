@@ -94,13 +94,12 @@ body {
 	clear: both;
 	float: left;
 }
-
  
-.slot {
+.slot_skills {
 	clear: both;
 }
 
-.slot div {
+.slot_skills div {
   float: left;
   width: 58px;
   height: 78px;
@@ -115,15 +114,15 @@ body {
   background: #fff;
 }
  
-.slot div:first-child, #cardPile div:first-child {
+.slot_skills div:first-child, #cardPile div:first-child {
   margin-left: 0;
 }
  
-.slot div.hovered {
+.slot_skills div.hovered {
   background: #aaa;
 }
  
-.slot div {
+.slot_skills div {
   border-style: dashed;
 }
 
@@ -138,18 +137,18 @@ body {
 }
 
 
-#profile_list {
+#profile_list, #slot_list {
 	border: 1px solid black;
-	width: 500px;
+	width: 600px;
 	margin: auto;
 }
 
-#profile_list ul {
+#profile_list ul, #slot_list ul {
 	padding: 0;
 	margin: 0;
 }
 
-#profile_list ul li {
+#profile_list ul li, #slot_list ul li {
 	margin: 20px;
 	list-style-type: none;
 	border: 1px solid black;	
@@ -170,10 +169,21 @@ a:active {color:black;}  /* selected link */
 	opacity: 0.7;
 }
 
-#slots {
-	float: left;
-}
-
 #edit_project {
 	clear: both;
+}
+
+.slot_info {
+	float:left;
+	clear: both;
+}
+
+.high-div {
+	height: 100px;	
+	border: 1px solid black;
+}
+
+#slot_filter {
+	width: 100%;
+	margin-left : 50px;	
 }

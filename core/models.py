@@ -31,7 +31,7 @@ class Skillset(models.Model):
     
     color = models.CharField(max_length=7)
     
-    def get_color_from_skills(self):
+    def get_color(self):
         red = 0
         blue = 0
         green = 0
@@ -77,7 +77,7 @@ def create_user_skillset(sender, instance, *args, **kwargs):
         instance.skillset = skillset
 
 def update_skillset_color(sender, instance, *args, **kwargs):
-    instance.color = instance.get_color_from_skills()
+    instance.color = instance.get_color()
     
 
 post_save.connect(create_user_profile, sender=User)

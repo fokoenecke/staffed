@@ -1,0 +1,14 @@
+<div id='slots' style='clear:both'>
+    <ul>
+	    {% load endless %}
+		{% paginate slot_list %}
+	    {% for slot in slot_list %}
+        <a href="/projects/{{ slot.project.id }}/">
+        	<li>
+        		{{slot.name}} in {{slot.project.name}} <div class="color_box" data-color="{{slot.skillset.color}}"></div>
+        	</li>
+        </a>
+		{% endfor %}
+		{% show_pages %}
+    </ul>
+</div>

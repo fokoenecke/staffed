@@ -1,5 +1,5 @@
 from core.forms import UserProfileForm
-from core.models import Skill, UserProfile
+from core.models import Skill, Skillset, UserProfile
 from django.contrib.auth import login, logout
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.http import HttpResponse, HttpResponseRedirect
@@ -47,7 +47,6 @@ def profile(request):
         skillset = user_profile.skillset
          
         data['profile_form'] = UserProfileForm(instance=user_profile)
-        data['skill_list'] = Skill.objects.all()
         data['skillset'] = skillset
         
         print user_profile
@@ -128,4 +127,25 @@ def assign_skill_to_skillset(request):
     data = simplejson.dumps(some_data)
     
     return HttpResponse(data, mimetype='application/json')
+
+#if ajax einbauen?
+@ensure_csrf_cookie
+def get_color_code_from_skills(request):
+    jsn = simplejson.loads(request.body)
+    logger = logging.getLogger("django")
     
+    skills = jsn['skills'];
+    
+    skillset = Skillset()
+    logger.error(skills)
+    for idx, skill in enumerate(skills):        
+        if Skill.objects.filter(pk=skill['id']).exists():
+            skillset_skill = Skill.objects.get(pk=skill['id'])
+            skillset.attach_skill(idx, skillset_skill)
+    
+    logger.error(skillset.get_color())
+    color = skillset.get_color()
+    some_data = {'return': 'true', 'color': color}
+    data = simplejson.dumps(some_data)
+        
+    return HttpResponse(data, mimetype='application/json')

@@ -1,5 +1,7 @@
 {% extends "core/base.html" %}
 {% block content %}
+
+    {% load static %}
 	<div id="hello">
 		{%if project_form.instance.id %}
 			edit Project <br />
@@ -26,7 +28,6 @@
 				<br \>
 			</div>
 		</form>
-		{% load static %}
 		<div id="skills">
 			{% for skill in skill_list %}
 				{% static "img/"|add:skill.image_name as skill_image %}
@@ -46,22 +47,29 @@
 			<div id="skill_slots">
 				{% for slot in project_form.instance.slots %}
 					<div class='slot' data-id='{{slot.id}}'>
-						{% for skill in slot.skillset.skills %}
-							{% if skill %}
-								<div class='skillset_slot' data-skill_id='{{skill.id}}' data-slot='{{forloop.counter0}}'>
-									{% static "img/"|add:skill.image_name as skill_image %}
-									<img src="{{skill_image}}" alt="{{skill.name}}" data-id="{{skill.id}}" data-name="{{skill.name}}" />
-								</div>
-							{% else %}
-								<div class='skillset_slot' data-skill_id='0' data-slot='{{forloop.counter0}}'>
-									{% static "img/open.png" as skill_image %}
-									<img src="{{skill_image}}" alt="open" >
-								</div>
-							{% endif %}
-						{% endfor %}
+						<div class="slot_info">
+							<input value="{{slot.name}}" ></input><br/> 
+							<textarea rows="" cols="">{{slot.description}}</textarea>
+						</div>
+						<div class="slot_skills">
+							{% for skill in slot.skillset.skills %}
+								{% if skill %}
+									<div class='skillset_slot' data-skill_id='{{skill.id}}' data-slot='{{forloop.counter0}}'>
+										{% static "img/"|add:skill.image_name as skill_image %}
+										<img src="{{skill_image}}" alt="{{skill.name}}" data-id="{{skill.id}}" data-name="{{skill.name}}" />
+									</div>
+								{% else %}
+									<div class='skillset_slot' data-skill_id='0' data-slot='{{forloop.counter0}}'>
+										{% static "img/open.png" as skill_image %}
+										<img src="{{skill_image}}" alt="open" >
+									</div>
+								{% endif %}
+							{% endfor %}
+						</div>
 					</div>
 				{% endfor %}
 			</div>
 		</div>
 	</div>
+	<script src="{% static 'js/project_script.js' %}"></script>
 {% endblock %}

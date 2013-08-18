@@ -8,14 +8,27 @@ from django.views.decorators.csrf import ensure_csrf_cookie
 from forms import ProjectForm
 from projects.models import Project, Slot
 from core.models import Skillset
+from core.helpers import rgb_difference
 import logging
 
 @ensure_csrf_cookie
-def project_list(request):
+def project_list(
+        request,
+        template='projects/list.html',
+        page_template='projects/list_page.html'):
+    
     if request.user.is_authenticated():
+        
         project_list = Project.objects.all().select_related()
-        context = {'project_list': project_list}
-        return render(request, 'projects/list.html', context)
+        context = {
+            'project_list': project_list,
+            'page_template': page_template,
+        }
+        
+        if request.is_ajax():
+            template = page_template
+            
+        return render(request, template, context)
     else:
         return index(request)
 
@@ -23,8 +36,31 @@ def project_list(request):
 def slot_list(request):
     if request.user.is_authenticated():
         slot_list = Slot.objects.all().select_related()
-        context = {'slot_list': slot_list}
-        return render(request, 'projects/slot_list.html', context)
+        
+        logger = logging.getLogger("django")
+        logger.error("test")
+        
+        if request.POST:
+            logger.error("test2")
+            jsn = simplejson.loads(request.body)
+            color = jsn['color'];
+        
+            logger.error(color)
+            for slot in slot_list:
+                
+                logger.error(rgb_difference(color, slot.skillset.get_color()))
+                if rgb_difference(color, slot.skillset.get_color()) > 20:
+                    logger.error("test3")
+                    slot_list = slot_list.exclude(id=slot.id)
+        
+        
+        logger.error(slot_list)
+        context = {'slot_list': slot_list,
+                   'skillset' : Skillset(),}
+        if request.POST:
+            return render(request, 'projects/slot_list_page.html', context)
+        else: 
+            return render(request, 'projects/slot_list.html', context)
     else:
         return index(request)
     
@@ -34,7 +70,6 @@ def add_project(request):
     if request.user.is_authenticated():
         data = {}
         data['project_form'] = ProjectForm()
-        data['skill_list'] = Skill.objects.all()
         
         return render(request, 'projects/new_project.html', data)
     else:
@@ -47,7 +82,6 @@ def edit_project(request, project_id):
         if project.owner == request.user.profile:
             data = {}
             data['project_form'] = ProjectForm(instance=project)
-            data['skill_list'] = Skill.objects.all()
         
             return render(request, 'projects/new_project.html', data)
         else:
@@ -114,6 +148,10 @@ def save_project(request):
                 
                 slot_skillset.save()        
                 project_slot.skillset = slot_skillset
+                
+                project_slot.name = slot['name']
+                project_slot.description = slot['desc']
+                
                 logger.error(project_slot) 
                 logger.error(project_slot.skillset) 
                 project_slot.save()

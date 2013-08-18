@@ -4,17 +4,15 @@
 		<a href="/projects/add/"><span>add Project</a>
 		{% if project_list %}
 		    <ul>
+				   
+				{% include page_template %}
+				
+				{% block js %}
+				    {{ block.super }}
+				    <script src="{{ STATIC_URL }}endless_pagination/js/endless-pagination.js"></script>
+				    <script>$.endlessPaginate({paginateOnScroll: true});</script>
+				{% endblock %}
 		    
-			    {% load endless %}
-				{% paginate project_list %}
-			    {% for project in project_list %}
-		        <a href="/projects/{{ project.id }}/">
-		        	<li>
-		        		<div>{{project.name}}</div>
-		        	</li>
-		        </a>
-				{% endfor %}
-				{% show_pages %}
 		    </ul>
 		{% else %}
 		    <p>No projects are available.</p>

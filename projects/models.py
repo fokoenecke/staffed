@@ -15,6 +15,9 @@ class Project(models.Model):
     owner = models.ForeignKey(UserProfile)
      
 class Slot(models.Model):
+    name = models.CharField(max_length=200)
+    description = models.TextField(blank=True)
+    
     user = models.OneToOneField(UserProfile, blank=True, null=True)
     project = models.ForeignKey(Project)
     skillset = models.OneToOneField(Skillset)

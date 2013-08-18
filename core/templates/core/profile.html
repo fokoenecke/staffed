@@ -1,5 +1,6 @@
 {% extends "core/base.html" %}
 {% block content %}
+	{% load static %}
 	<div id="hello">
 		<div id="profile_box">    
 			{{ user.username }}            
@@ -15,7 +16,6 @@
 				
 				<div id='skills'>
 					Skillset: <br \>
-					{% load static %}
 					{% for skill in skill_list %}
 						{% static "img/"|add:skill.image_name as skill_image %}
 						<img src="{{skill_image}}" alt="{{skill.name}}" data-id="{{skill.id}}" data-name="{{skill.name}}" />
@@ -23,24 +23,26 @@
 				</div>
 				<div id="skill_slots">
 					<div class="slot">
-						{% for skill in skillset.skills %}
-							{% if skill %}
-								<div id="skillset_skill{{forloop.counter0}}" data-number="{{skill.id}}" data-slot="{{forloop.counter0}}">
-									{{skill.name}}
-									{% static "img/"|add:skill.image_name as skill_image %}
-									<img src="{{skill_image}}" alt="{{skill.name}}" >
-								</div>
-							{% else %} 
-								<div id="skillset_skill{{forloop.counter0}}" data-number="0" data-slot="{{forloop.counter0}}">
-									Skill
-									{% static "img/open.png" as skill_image %}
-									<img src="{{skill_image}}" alt="open" >
-								</div>
-							{% endif %}
-						{% endfor %}
+						<div class="slot_skills">
+							{% for skill in skillset.skills %}
+								{% if skill %}
+									<div id="skillset_skill{{forloop.counter0}}" data-number="{{skill.id}}" data-slot="{{forloop.counter0}}">
+										{{skill.name}}
+										{% static "img/"|add:skill.image_name as skill_image %}
+										<img src="{{skill_image}}" alt="{{skill.name}}" >
+									</div>
+								{% else %} 
+									<div id="skillset_skill{{forloop.counter0}}" data-number="0" data-slot="{{forloop.counter0}}">
+										Skill
+										{% static "img/open.png" as skill_image %}
+										<img src="{{skill_image}}" alt="open" >
+									</div>
+								{% endif %}
+							{% endfor %}
+						</div>
+						<div id="skillset_color" data-color="{{skillset.color}}"></div>
 					</div>
 				</div>
-				<div id="skillset_color" data-color="{{skillset.color}}"></div>
 
 				<div>
 					<input style="float:right; clear:both;" type="submit" value="save"/>
@@ -50,4 +52,5 @@
 			</form>
 		</div>
 	</div>
+	<script src="{% static 'js/profile_script.js' %}"></script>
 {% endblock %}

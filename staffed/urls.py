@@ -15,10 +15,12 @@ urlpatterns = patterns('',
     # Uncomment the admin/doc line below to enable admin documentation:
     # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
 
+    #TODO: hier nur links auf die module
     # Uncomment the next line to enable the admin:
     url(r'^$', index, name='index'),
     url(r'^profile/(?P<profile_id>\d+)', views.pub_profile, name='pub_profile'),
     url(r'^profile/assign_skill/', views.assign_skill_to_skillset, name='assign_skill'),
+    url(r'^ajax/get_color/', views.get_color_code_from_skills, name='get_color'),
     url(r'^profile/', profile, name='profile'),
     url(r'^profiles/', profile_list, name='profile_list'),
     url(r'^projects/', include('projects.urls')),

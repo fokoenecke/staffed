@@ -12,24 +12,26 @@
 				<span>Ende: {{project.end_date}}</span><br \>
 			</div>
 		</div>
-		<div id='slots'>
+		<div id='skill_slots'>
 			{% load static %}
 			{% for slot in project.slots %}
 				<div class='slot' data-id='{{slot.id}}'>
-					{% for skill in slot.skillset.skills %}
-						{% if skill %}
-							<div class='skill' data-id='{{skill.id}}' data-nr='{{forloop.counter0}}'>
-								{% static "img/"|add:skill.image_name as skill_image %}
-								<img src="{{skill_image}}" alt="{{skill.name}}" data-id="{{skill.id}}" data-name="{{skill.name}}" />
-							</div>
-						{% else %}
-							<div class='skill' data-id='0' data-nr='{{forloop.counter0}}'>
-								Skill
-								{% static "img/open.png" as skill_image %}
-								<img src="{{skill_image}}" alt="open" >
-							</div>
-						{% endif %}
-					{% endfor %}
+					<div class="slot_skills">
+						{% for skill in slot.skillset.skills %}
+							{% if skill %}
+								<div class='skill' data-id='{{skill.id}}' data-nr='{{forloop.counter0}}'>
+									{% static "img/"|add:skill.image_name as skill_image %}
+									<img src="{{skill_image}}" alt="{{skill.name}}" data-id="{{skill.id}}" data-name="{{skill.name}}" />
+								</div>
+							{% else %}
+								<div class='skill' data-id='0' data-nr='{{forloop.counter0}}'>
+									Skill
+									{% static "img/open.png" as skill_image %}
+									<img src="{{skill_image}}" alt="open" >
+								</div>
+							{% endif %}
+						{% endfor %}
+					</div>
 					<div class="slot_color" data-color="{{slot.skillset.color}}"></div>
 				</div>
 			{% endfor %}

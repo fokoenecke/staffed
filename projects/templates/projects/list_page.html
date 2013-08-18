@@ -1,0 +1,10 @@
+{% load endless %}
+{% paginate project_list %}
+{% for project in project_list %}
+	<a href="/projects/{{ project.id }}/">
+		<li>
+			<div class="high-div">{{project.name}}</div>
+		</li>
+	</a>
+{% endfor %}
+{% show_more %}

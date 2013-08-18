@@ -166,4 +166,5 @@ from django.conf.global_settings import TEMPLATE_CONTEXT_PROCESSORS
 TEMPLATE_CONTEXT_PROCESSORS += (
     'django.core.context_processors.request',
     'core.processors.login_form',
+    'core.processors.skill_list',
 )
