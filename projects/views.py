@@ -1,12 +1,11 @@
 from core.models import Skill
 from core.views import index
-from django.forms.models import inlineformset_factory
 from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404
 from django.utils import simplejson
 from django.views.decorators.csrf import ensure_csrf_cookie
 from forms import ProjectForm
-from projects.models import Project, Slot
+from projects.models import Project, Slot, Application
 from core.models import Skillset
 from core.helpers import rgb_difference
 import logging
@@ -161,4 +160,71 @@ def save_project(request):
             some_data['error'] = "invalid input"
     
     data = simplejson.dumps(some_data)
-    return HttpResponse(data, mimetype='application/json')
+    return HttpResponse(data, content_type='application/json')
+
+@ensure_csrf_cookie
+def apply_for_slot(request):
+    slot_id = simplejson.loads(request.body)
+    logger = logging.getLogger("django")
+
+    application = Application()
+    application.slot = Slot.objects.get(pk=slot_id)
+    application.applicant = request.user.profile
+    application.save()
+
+    some_data = {'return': 'true'}
+    data = simplejson.dumps(some_data)
+    return HttpResponse(data, content_type='application/json')
+
+@ensure_csrf_cookie
+def applications(request):
+    
+    if request.user.is_authenticated():
+        
+        projects = Project.objects.filter(owner = request.user.profile)
+        slots = []
+        
+        for project in projects:
+            for slot in project.slot_set.all():
+                slots.append(slot)
+        
+        applications = []
+        for slot in slots:
+            for application in slot.application_set.all():
+                applications.append(application)
+        
+        context = {
+            'application_list': applications,
+        }
+                    
+        return render(request, 'projects/application.html', context)
+    else:
+        return index(request)
+    
+@ensure_csrf_cookie
+def apply_application(request):
+    application_id = simplejson.loads(request.body)
+    
+    application = Application.objects.get(pk=application_id)
+    application.accepted = True
+    
+    slot = application.slot
+    slot.user = application.applicant
+    application.save()
+    slot.save()
+
+    some_data = {'return': 'true'}
+    data = simplejson.dumps(some_data)
+    return HttpResponse(data, content_type='application/json')
+    
+@ensure_csrf_cookie  
+def decline_application(request):
+    application_id = simplejson.loads(request.body)
+    
+    application = Application.objects.get(pk=application_id)
+    application.accepted = False
+    application.save()
+
+    some_data = {'return': 'true'}
+    data = simplejson.dumps(some_data)
+    return HttpResponse(data, content_type='application/json')

@@ -43,6 +43,23 @@
 						<div id="skillset_color" data-color="{{skillset.color}}"></div>
 					</div>
 				</div>
+				
+				<div>
+					<h3>Bewerbungen für Projekte</h3>
+					{% for application in applications %}
+						<a href="/projects/{{application.slot.project.id}}" >{{application.slot.name}} in {{application.slot.project.name}}</a>
+						{% if application.accepted = None%}
+							(offen)
+		        		{% else %}
+		        			{% if application.accepted %}
+		        				(accepted)
+		        			{% else %}
+		        				(declined)
+		        			{% endif %}
+		        		{% endif %}
+						<br \>
+					{% endfor %}
+				</div>
 
 				<div>
 					<input style="float:right; clear:both;" type="submit" value="save"/>

@@ -10,6 +10,12 @@ urlpatterns = patterns('',
     url(r'^edit/(?P<project_id>\d+)', views.edit_project, name='project_edit'),
     url(r'^save/$', views.save_project, name='project_save'),
     
-    url(r'slots/$', views.slot_list, name='slots'),
+    url(r'^slots/$', views.slot_list, name='slots'),
+    url(r'^slots/apply/$', views.apply_for_slot, name='apply'),
+    
+    url(r'^applications/$', views.applications, name='application_list'),
+    url(r'^applications/accept/$', views.apply_application, name='application_approve'),
+    url(r'^applications/decline/$', views.decline_application, name='application_decline'),
+    
     
 )

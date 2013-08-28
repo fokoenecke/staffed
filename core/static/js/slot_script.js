@@ -66,3 +66,38 @@ function project_assign_skill( event, ui ){
 $(function() {
 	makeDroppable();
 });
+
+$('#profile_finder').click(function() {
+	console.log("find for skills");
+	
+    $.ajax({
+        type:"POST",
+        url:"/profile_skills/",
+        success: function(msg){
+			if (msg.error) {
+				$('#error').text(msg.error);
+				$('#error').show();
+			}
+            if (msg.return === 'true') {
+            	var idx = 0;
+            	msg.skills.map( function(skill)  {
+            		console.log(skill['id']);
+            		var $skill_slot = $(".skillset_slot[data-slot='" + idx + "']");            		
+            	    var $img = $skill_slot.find('img');
+            	    
+            	    console.log($skill_slot);
+            	    console.log($img);
+            	    $skill_slot.html(skill['name']);
+            	    $skill_slot.data('skill_id', skill['id']);
+            	    
+            	    $img.attr('src', "../../static/img/" + skill['img']);
+            	    $skill_slot.append($img);
+            	    
+            	    idx++;
+            		
+            	});
+            	var color = get_filter_color($('.slot_skills'));
+			}
+        }
+    });
+});

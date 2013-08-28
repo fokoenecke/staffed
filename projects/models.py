@@ -21,3 +21,9 @@ class Slot(models.Model):
     user = models.OneToOneField(UserProfile, blank=True, null=True)
     project = models.ForeignKey(Project)
     skillset = models.OneToOneField(Skillset)
+    
+class Application(models.Model):
+    created_at = models.DateTimeField(auto_now_add = True)
+    slot = models.ForeignKey(Slot)
+    applicant = models.ForeignKey(UserProfile)
+    accepted = models.NullBooleanField()

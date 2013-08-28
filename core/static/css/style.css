@@ -144,7 +144,7 @@ body {
 }
 
 #profile_list ul, #slot_list ul {
-	padding: 0;
+	padding: 0;#
 	margin: 0;
 }
 
@@ -185,5 +185,12 @@ a:active {color:black;}  /* selected link */
 
 #slot_filter {
 	width: 100%;
-	margin-left : 50px;	
+	margin-left : 50px;
+}
+
+.application {
+	width: 350px;
+	border: 1px solid grey;
+	padding-left: 20px;
+	margin: 5px;
 }

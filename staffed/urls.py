@@ -27,6 +27,7 @@ urlpatterns = patterns('',
     url(r'^register/', register, name='register'),
     url(r'^save_profile/', save_profile, name='save_profile'),
     url(r'^login/', include('core.urls')),
+    url(r'^profile_skills/', views.get_profile_skills, name='profile_skills'),
     
     url(r'^admin/', include(admin.site.urls)),
 )

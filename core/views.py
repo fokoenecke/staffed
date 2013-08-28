@@ -6,6 +6,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 from django.utils import simplejson
 from django.views.decorators.csrf import ensure_csrf_cookie
+from projects.models import Application
 import logging
 
 @ensure_csrf_cookie
@@ -28,14 +29,14 @@ def ajax_login(request):
             some_data['error'] = "invalid login"
 
     data = simplejson.dumps(some_data)
-    return HttpResponse(data, mimetype='application/json')
+    return HttpResponse(data, content_type='application/json')
 
 @ensure_csrf_cookie
 def ajax_logout(request):
     logout(request)
     some_data = {'return': 'true'}
     data = simplejson.dumps(some_data)
-    return HttpResponse(data, mimetype='application/json')
+    return HttpResponse(data, content_type='application/json')
 
 
 @ensure_csrf_cookie
@@ -45,9 +46,11 @@ def profile(request):
         data = {}
         user_profile = request.user.profile
         skillset = user_profile.skillset
+        applications = Application.objects.filter(applicant=request.user)
          
         data['profile_form'] = UserProfileForm(instance=user_profile)
         data['skillset'] = skillset
+        data['applications'] = applications
         
         print user_profile
         return render(request, 'core/profile.html', data)
@@ -86,7 +89,7 @@ def save_profile(request):
             some_data['error'] = "invalid input"
     
     data = simplejson.dumps(some_data)
-    return HttpResponse(data, mimetype='application/json')
+    return HttpResponse(data, content_type='application/json')
 
 @ensure_csrf_cookie
 def profile_list(request):
@@ -126,7 +129,7 @@ def assign_skill_to_skillset(request):
     some_data = {'return': 'true', 'color': skillset.color}
     data = simplejson.dumps(some_data)
     
-    return HttpResponse(data, mimetype='application/json')
+    return HttpResponse(data, content_type='application/json')
 
 #if ajax einbauen?
 @ensure_csrf_cookie
@@ -134,7 +137,7 @@ def get_color_code_from_skills(request):
     jsn = simplejson.loads(request.body)
     logger = logging.getLogger("django")
     
-    skills = jsn['skills'];
+    skills = jsn['skills']
     
     skillset = Skillset()
     logger.error(skills)
@@ -146,6 +149,22 @@ def get_color_code_from_skills(request):
     logger.error(skillset.get_color())
     color = skillset.get_color()
     some_data = {'return': 'true', 'color': color}
+    data = simplejson.dumps(some_data)
+        
+    return HttpResponse(data, content_type='application/json')
+
+@ensure_csrf_cookie
+def get_profile_skills(request):
+    skills = request.user.profile.skillset.skills()
+    logger = logging.getLogger("django")
+    
+    skill_list = []
+    for skill in skills:
+        skill_list.append({"id": skill.id, "img": skill.image_name, "name": skill.name})
+    
+    logger.error(skill_list)
+    
+    some_data = {'return': 'true', 'skills': skill_list}
     data = simplejson.dumps(some_data)
         
     return HttpResponse(data, mimetype='application/json')
