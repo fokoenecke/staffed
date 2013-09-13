@@ -1,70 +1,46 @@
 function ajax_assign_skill( event, ui ){
 	var skill = new Object;
+	$slot = $(this).parent();
+
 	skill.id = ui.draggable.data( 'id' );
-	skill.slot_nr = $(this).data( 'slot' );
+	skill.slot_nr = $slot.data('slot');
 	
+	var jsonString = JSON.stringify(skill);
+	console.log(jsonString);
 	
-	var jsonString = JSON.stringify(skill)
 	$.ajax({
 		type:"POST",
 		url:"/profile/assign_skill/",
 		data:jsonString,
 		success: function(msg) {
 			console.log(msg.color);
-			$('#skillset_color').data('color', msg.color);
+			$('.color_box').data('color', msg.color);
 			updateColor();
 		}
 	});
 	
-    var $img = $(this).find('img');
-    $(this).html(ui.draggable.data( 'name' ));
-    $(this).append($img);
+    var $img = $(this);
+    $slot.find('span').html("");
+    $slot.find('span').html(ui.draggable.data( 'name' ));
+    $slot.data('skill_id', skill.id);
 	
-	console.log(ui.draggable.attr('src'));
-	console.log($(this).find('img'));
-	$(this).find('img').attr('src', ui.draggable.attr('src'));
+	var img_src = ui.draggable.find('img').attr('src');
+	var path = img_src.substring(0, img_src.lastIndexOf("/"));
+	var file = img_src.substring(img_src.lastIndexOf("/"));
+	
+	
+	console.log(path + "/64" + file);
+	$(this).attr('src', path + "/64" + file);
 	
 }
 
 function makeDroppable() {
-    $('.skillset_slot').droppable( {
-        accept: $( "img", $("#skills")),
+    $('.slot img').droppable( {
+        accept: $( ".drag", $( ".skill", $("#slider") ) ),
         hoverClass: 'hovered',
         drop: ajax_assign_skill
     });
 }
-
-$(function() {
-    for ( var i=0; i<5; i++ ) {
-        $('#skillset_skill'+i).droppable( {
-            accept: $( "img", $("#skills")),
-            hoverClass: 'hovered',
-            drop: ajax_assign_skill
-        });
-    }
-    
-	makeDroppable();
-});
-
-$('#profile_form').submit(function(){
-
-	$('#error').hide();
-    $.ajax({
-        type:"POST",
-        url:"/save_profile/",
-        data:$('#profile_form').serialize(),
-        success: function(msg){
-			if (msg.error) {
-				$('#error').text(msg.error);
-				$('#error').show();
-			}
-            if (msg.return === 'true') {
-				window.location.reload();
-			}
-        }
-    });
-	return false;
-});
 
 $(function() {
 	makeDroppable();

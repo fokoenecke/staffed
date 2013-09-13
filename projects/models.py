@@ -10,20 +10,28 @@ class Project(models.Model):
     
     name = models.CharField(max_length=200)
     description = models.TextField()
-    start_date = models.DateField()
-    end_date = models.DateField()
     owner = models.ForeignKey(UserProfile)
      
 class Slot(models.Model):
     name = models.CharField(max_length=200)
     description = models.TextField(blank=True)
     
-    user = models.OneToOneField(UserProfile, blank=True, null=True)
+    user = models.ForeignKey(UserProfile, blank=True, null=True)
     project = models.ForeignKey(Project)
     skillset = models.OneToOneField(Skillset)
     
+    def applicants(self):
+        applications = Application.objects.all().filter(slot=self).select_related()
+        applicants = set()
+        
+        for application in applications:
+            applicants.add(application.applicant)
+        
+        return applicants 
+
 class Application(models.Model):
     created_at = models.DateTimeField(auto_now_add = True)
     slot = models.ForeignKey(Slot)
     applicant = models.ForeignKey(UserProfile)
     accepted = models.NullBooleanField()
+    

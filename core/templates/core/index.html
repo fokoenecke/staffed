@@ -1,6 +1,51 @@
 {% extends "core/base.html" %}
 {% block content %}
-	<div id="hello">
-		<span>Hello Worldute!</span>
+	<div id="content" class="container">
+		<h1>staffed Projektvermittlung</h1>
+		
+		{% if messages %}
+			{% for message in messages %}
+				<div
+					{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}
+				</div>
+			{% endfor %}
+			<br />
+			<br />
+		{% endif %}
+		
+		<p>F&uuml;r jeden Job braucht es die passenden Mitarbeiter. staffed macht das Finden zum Kinderspiel.<br />
+		Definiere deine Interessen und F&auml;higkeiten durch ein intuitives Farbsystem und lasse staffed den Rest erledigen.<br />
+		Egal ob du:</p>
+		<ul>
+			<li>Hilfe bei der Umsetzung deiner genialen Projektidee brauchst</li>
+			<li>deine F&auml;higkeiten in einem tollen Team unter Beweis stellen m&ouml;chtest </li>
+			<li>Inspiration beim Finden von Projektideen ben&ouml;tigst</li>
+			<li>oder den Kontakt zu Gleichgesinnten suchst</li>
+		</ul>
+		
+		{% if not user.is_authenticated %}
+			<p><a href="/register"><strong>Registriere</strong></a> dich, f&uuml;lle dein Profil aus und schon kannst du starten!</p>
+		{% endif %}
+	
+		<ul id="page_options">
+			<li>
+				<a href="/projects">
+					<h3>Projekte durchst&ouml;bern</h3>
+					<p>Sieh dir an, welche Projekte andere Mitglieder einstellt haben.</p>
+				</a>
+			</li>
+			<li>
+				<a href="/projects/slots">
+					<h3>Gesuche finden</h3>
+					<p>Finde Aufgaben, die deinen Interessen und F&auml;higkeiten entsprechen und bewirb dich!<p>
+				</a>
+			</li>
+			<li>
+				<a href="/profiles">
+					<h3>Mitglieder betrachten</h3>
+					<p>Suche Mitglieder, die deine Interessen teilen und finde Teampartner und Freunde.</p>
+				</a>
+			</li>			
+		</ul>
 	</div>
 {% endblock %}

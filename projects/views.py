@@ -8,33 +8,23 @@ from forms import ProjectForm
 from projects.models import Project, Slot, Application
 from core.models import Skillset
 from core.helpers import rgb_difference
+from django.contrib import messages
 import logging
 
+
 @ensure_csrf_cookie
-def project_list(
-        request,
-        template='projects/list.html',
-        page_template='projects/list_page.html'):
-    
+def project_list(request):
     if request.user.is_authenticated():
-        
-        project_list = Project.objects.all().select_related()
-        context = {
-            'project_list': project_list,
-            'page_template': page_template,
-        }
-        
-        if request.is_ajax():
-            template = page_template
-            
-        return render(request, template, context)
+        project_list = Project.objects.all().select_related().order_by('name')
+        context = {'project_list': project_list}
+        return render(request, 'projects/list.html', context)
     else:
-        return index(request)
+        return index(request)    
 
 @ensure_csrf_cookie
 def slot_list(request):
     if request.user.is_authenticated():
-        slot_list = Slot.objects.all().select_related()
+        slot_list = Slot.objects.all().filter(user__isnull=True).select_related()
         
         logger = logging.getLogger("django")
         logger.error("test")
@@ -91,7 +81,6 @@ def show_project(request, project_id):
     if request.user.is_authenticated():
         project = get_object_or_404(Project, pk=project_id)
         
-        
         #bsp fuer inline forms
         #projectSlots = inlineformset_factory(Project, Slot)
         #slotForms = projectSlots(instance=project)
@@ -108,7 +97,8 @@ def show_project(request, project_id):
 def save_project(request):
     some_data = {'return': 'false'}
     logger = logging.getLogger("django")
-      
+    message = ''
+    
     if request.method == 'POST':
         project_form = ProjectForm(data=request.POST)
         if project_form.is_valid():
@@ -118,46 +108,53 @@ def save_project(request):
             project_id = request.POST.get('project_id')
             if project_id:
                 project = Project.objects.get(pk=project_id)
+                project.name = project_form.cleaned_data['name']
+                project.description = project_form.cleaned_data['description']
+                message = "Das Projekt " + project.name + " wurde erfolgreich gespeichert."
             else: 
                 project = project_form.save(commit=False)
+                message = "Das Projekt " + project.name + " wurde erfolgreich angelegt."
             
             project.owner = request.user.profile
-            slot_list = request.POST.get('slot_list');
-            jsn = simplejson.loads(slot_list)
+            member_list = request.POST.get('member_list');
+            jsn = simplejson.loads(member_list)
             
             project.save()    
-            for slot in jsn:
+            for member in jsn:
                 
-                logger.error(slot)
-                if "id" in slot:
-                    project_slot = Slot.objects.get(pk=slot['id'])
-                    slot_skillset = project_slot.skillset
+                logger.error(member)
+                if "id" in member:
+                    project_member = Slot.objects.get(pk=member['id'])
+                    member_skillset = project_member.skillset
                 else:
-                    project_slot = Slot()
-                    project_slot.project = project
-                    slot_skillset = Skillset()
+                    project_member = Slot()
+                    project_member.project = project
+                    member_skillset = Skillset()
                            
-                skills = slot['skills']
+                slots = member['slots']
                 
-                for skill in skills:
-                    slot_nr = skill['slot']
-                    if Skill.objects.filter(pk=skill['id']).exists():
-                        skillset_skill = Skill.objects.get(pk=skill['id'])
-                        slot_skillset.attach_skill(slot_nr, skillset_skill)
+                for slot in slots:
+                    slot_nr = slot['slot']
+                    if "id" in slot:
+                        if Skill.objects.filter(pk=slot['id']).exists():
+                            skill = Skill.objects.get(pk=slot['id'])
+                            member_skillset.attach_skill(slot_nr, skill)
                 
-                slot_skillset.save()        
-                project_slot.skillset = slot_skillset
+                member_skillset.save()        
+                project_member.skillset = member_skillset
                 
-                project_slot.name = slot['name']
-                project_slot.description = slot['desc']
+                project_member.name = member['name']
+                project_member.description = member['desc']
                 
-                logger.error(project_slot) 
-                logger.error(project_slot.skillset) 
-                project_slot.save()
+                logger.error(project_member) 
+                logger.error(project_member.skillset) 
+                project_member.save()
             
             some_data['return'] = 'true'
+            some_data['project_id'] = project.id
+            messages.success(request, message)
         else:
-            some_data['error'] = "invalid input"
+            some_data['error'] = project_form.errors
     
     data = simplejson.dumps(some_data)
     return HttpResponse(data, content_type='application/json')
@@ -165,14 +162,15 @@ def save_project(request):
 @ensure_csrf_cookie
 def apply_for_slot(request):
     slot_id = simplejson.loads(request.body)
-    logger = logging.getLogger("django")
 
     application = Application()
     application.slot = Slot.objects.get(pk=slot_id)
     application.applicant = request.user.profile
     application.save()
 
-    some_data = {'return': 'true'}
+    messages.success(request, "Du hast dich erfolgreich als " + application.slot.name + " beworben!")
+ 
+    some_data = {'return': 'true'}    
     data = simplejson.dumps(some_data)
     return HttpResponse(data, content_type='application/json')
 

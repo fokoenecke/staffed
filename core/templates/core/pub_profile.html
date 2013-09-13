@@ -1,35 +1,50 @@
 {% extends "core/base.html" %}
 {% block content %}
-	<div id="hello">
-		<div id="profile_box">
-			<div id="profile_info">
-				<span>Username : {{profile.user.username}}</span><br \>       
-				<span>Vorname: {{profile.first_name}}</span><br \>
-				<span>Nachname: {{profile.last_name}}</span><br \>
-				<span>studiert: {{profile.studies}}</span><br \>
-				
+	{% load static %}
+	<div id="content" class="container">
+		<div class="profile_header">
+			<h1>Profil von {{ profile.user.username }}</h1>
+			{% if profile.user = user %}<a href='/profile/'>Projekt bearbeiten</a>{% endif %}
+		</div>
+		<div class="clear"></div>
+		<div id="profile_box">    
+			<div class="profile_image_wrapper">
+				<img src="{{ profile.avatar }}" height="150" width="150" />       
 			</div>
 			
-			Skillset: <br \>
-			{% load static %}									
-			<div id="skill_slots">
-				<div class="slot">
-					<div class="slot_skills">
-						{%for skill in skillset%}
-							{% if skill %}
-								<div id="skillset_skill{{forloop.counter0}}" data-number="{{skill.id}}">
-									{{skill.name}}
-									{% static "img/"|add:skill.image_name as skill_image %}
-									<img src="{{skill_image}}" alt="{{skill.name}}" >
-								</div>
-							{% else %} 
-								<div id="skillset_skill{{forloop.counter0}}" data-number="0">Skill</div>
-							{% endif %}
-						{% endfor %}
-					</div>
-					<div id="skillset_color" data-color="{{skillset_color}}"></div> 
-				</div>
+			<div id="profile_info">
+				<span>Vorname:</span><span>{{profile.first_name}}</span><br \>
+				<span>Nachname:</span><span>{{profile.last_name}}</span><br \>
+				<span>studiert:</span><span>{{profile.studies}}</span><br \>
+			</div>
+
+		</div>
+		
+		<div class='clear gap_20'></div>
+		<div id="skill_slots">
+		
+			<div id="slots_header" class="inline_header">
+				<h3>Skills</h3>
+			</div>
+			<div id="slots">
+				<div id="slots_color" class="color_box rct_16_64" data-color="{{skillset_color}}"></div>				
+				{% for skill in skillset %}
+					{% if skill %}
+						<div class="slot" data-skill_id="{{skill.id}}" data-slot="{{forloop.counter0}}">
+							{% static "img/skills/64/"|add:skill.image_name as skill_image %}
+							<img src="{{skill_image}}" alt="{{skill.name}}" >
+							<span>{{skill.name}}</span>
+						</div>
+					{% else %} 
+						<div class="slot" data-skill_id="0" data-slot="{{forloop.counter0}}">
+							{% static "img/open.png" as skill_image %}
+							<img src="{{skill_image}}" alt="open" >
+							<span>(offen)</span>
+						</div>
+					{% endif %}
+				{% endfor %}
 			</div>
 		</div>
 	</div>
+	<script src="{% static 'js/profile_script.js' %}"></script>
 {% endblock %}

@@ -13,6 +13,7 @@ function get_filter_color($filter_div){
 	
 	var color = '';
 	var jsonString = JSON.stringify(skillset)
+	console.log(jsonString);
 	$.ajax({
 		type:"POST",
 		url:"/ajax/get_color/",
@@ -29,7 +30,7 @@ function get_filter_color($filter_div){
 		        url:"/projects/slots/",
 				data:jsonString,
 		        success: function(msg){
-		        	$('#slots').replaceWith(msg);
+		        	$('#slot_list ul').replaceWith(msg);
 					updateColor();
 		        }
 		    });
@@ -39,8 +40,8 @@ function get_filter_color($filter_div){
 }
 
 function makeDroppable() {
-    $('.skillset_slot').droppable( {
-        accept: $( "img", $("#skills")),
+    $('.skillset_slot img').droppable( {
+        accept: $( ".drag", $( ".skill", $("#slider") ) ),
         hoverClass: 'hovered',
         drop: project_assign_skill
     });
@@ -48,19 +49,17 @@ function makeDroppable() {
 
 function project_assign_skill( event, ui ){
 	var skill_id = ui.draggable.data( 'id' );
-	console.log(skill_id);
-    var $img = $(this).find('img');
+    var $img = $(this);
     
-    $(this).html(ui.draggable.data( 'name' ));
-    $(this).append($img);
+    $slot = $(this).parent();
 	
-	console.log(ui.draggable.attr('src'));
-	console.log($(this).find('img'));
-	$(this).find('img').attr('src', ui.draggable.attr('src'));
-	$(this).data('skill_id', skill_id);
+    $slot.data('skill_id', skill_id);    
+	var img_src = ui.draggable.find('img').attr('src');
+	var path = img_src.substring(0, img_src.lastIndexOf("/"));
+	var file = img_src.substring(img_src.lastIndexOf("/"));
+	$(this).attr('src', path + "/64" + file);
 	
 	var color = get_filter_color($('.slot_skills'));
-	console.log(color);
 }
 
 $(function() {
@@ -68,8 +67,6 @@ $(function() {
 });
 
 $('#profile_finder').click(function() {
-	console.log("find for skills");
-	
     $.ajax({
         type:"POST",
         url:"/profile_skills/",
@@ -81,16 +78,12 @@ $('#profile_finder').click(function() {
             if (msg.return === 'true') {
             	var idx = 0;
             	msg.skills.map( function(skill)  {
-            		console.log(skill['id']);
             		var $skill_slot = $(".skillset_slot[data-slot='" + idx + "']");            		
             	    var $img = $skill_slot.find('img');
             	    
-            	    console.log($skill_slot);
-            	    console.log($img);
-            	    $skill_slot.html(skill['name']);
             	    $skill_slot.data('skill_id', skill['id']);
             	    
-            	    $img.attr('src', "../../static/img/" + skill['img']);
+            	    $img.attr('src', "../../static/img/skills/64/" + skill['img']);
             	    $skill_slot.append($img);
             	    
             	    idx++;

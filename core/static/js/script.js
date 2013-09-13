@@ -13,15 +13,15 @@ $.ajaxSetup({
 });
 
 $('#login_form').submit(function(){
-	$('#error').hide();
+	$('#login_error').hide();
     $.ajax({
         type:"POST",
         url:"/login/ajax_login/",
         data:$('#login_form').serialize(),
         success: function(msg){
 			if (msg.error) {
-				$('#error').text(msg.error);
-				$('#error').show();
+				$('#login_error').text(msg.error);
+				$('#login_error').show();
 			}
             if (msg.return === 'true') {
 				window.location.reload();
@@ -42,20 +42,15 @@ function ajax_logout(){
     }); 
 }
 
-
-
 $('#logout_button').click(function(){ 
 	ajax_logout();
 	return false;
 })
 
 function updateColor(){
-	$('#skillset_color').css('background-color', $('#skillset_color').data('color'));
-	$('.slot_color').each(function() {$(this).css('background-color', $(this).data('color'))});
-	
 	$('.color_box').each(function() {
 		$(this).css('background-color', $(this).data('color'));
-		$(this).css('border-color', $(this).data('color'));
+		//$(this).css('border-color', $(this).data('color'));
 	});
 }
 
@@ -78,8 +73,12 @@ $(function() {
             box.hide();
         }
     });
-    $( "img", $("#skills") ).draggable({ revert: true, helper: "clone" });
+    $( ".drag", $( ".skill", $("#slider") ) ).draggable({ revert: true, helper: "clone" });
     updateColor();
+    
+	$('.skills_toggle').click(function() {
+	  $( "#slider" ).toggle( "slide", { direction: "right" } );
+	});
 });
 
 

@@ -1,7 +1,11 @@
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.db import models
 from django.db.models.signals import post_save, pre_save
+from PIL import Image
 import logging
+import os
+
 
 class Skill(models.Model):
     
@@ -41,6 +45,13 @@ class Skillset(models.Model):
                 red += skill.red
                 blue += skill.blue
                 green += skill.green
+                
+        if red > 255:
+            red = 255
+        if blue > 255:
+            blue = 255
+        if green > 255:
+            green = 255
 
         hexcolor = '#%02x%02x%02x' % (red, green, blue)        
         return hexcolor
@@ -58,28 +69,45 @@ class Skillset(models.Model):
             self.skill5 = skill
 
 
+def upload_to(instance, filename):
+    return settings.MEDIA_ROOT + 'img/%s/%s' % (instance.user.username, filename)
+
 class UserProfile(models.Model):
     user = models.OneToOneField('auth.User', related_name='profile')
     skillset = models.OneToOneField('Skillset', related_name='skillset', null=True)
-    matriculation_nr = models.CharField(max_length=255)
-    first_name = models.CharField(max_length=255)
-    last_name = models.CharField(max_length=255)
-    studies = models.CharField(max_length=255)
-              
+    first_name = models.CharField(max_length=255, blank=True)
+    last_name = models.CharField(max_length=255, blank=True)
+    studies = models.CharField(max_length=255, blank=True)
+    avatar = models.ImageField(upload_to=upload_to, blank=True, null=True)
+    
+    def save(self, *args, **kwargs):
+
+        if self.skillset is None:
+            skillset = Skillset()
+            skillset.save()
+            self.skillset = skillset
+                    
+        super(UserProfile, self).save(*args, **kwargs)
+        if not self.id or not self.avatar:
+            return            
+
+        image = Image.open(self.avatar)
+        (width, height) = 150, 150
+
+        size = ( width, height)
+        image = image.resize(size, Image.ANTIALIAS)
+        image.save(self.avatar.path)
+
+
+    def image_file(self):
+        return 'img/' + self.user.username + '/' + os.path.basename(self.avatar.name)
+
 def create_user_profile(sender, instance, created, **kwargs):
     if created:
         _, created = UserProfile.objects.get_or_create(user=instance)
-
-def create_user_skillset(sender, instance, *args, **kwargs):
-    if instance.skillset is None:
-        skillset = Skillset()
-        skillset.save()
-        instance.skillset = skillset
-
+      
 def update_skillset_color(sender, instance, *args, **kwargs):
     instance.color = instance.get_color()
     
-
 post_save.connect(create_user_profile, sender=User)
-pre_save.connect(create_user_skillset, sender=UserProfile)
 pre_save.connect(update_skillset_color, sender=Skillset)

@@ -1,21 +1,57 @@
 {% extends "core/base.html" %}
 {% block content %}
-	<div id="project_list">
-		<a href="/projects/add/"><span>add Project</a>
-		{% if project_list %}
-		    <ul>
-				   
-				{% include page_template %}
-				
-				{% block js %}
-				    {{ block.super }}
-				    <script src="{{ STATIC_URL }}endless_pagination/js/endless-pagination.js"></script>
-				    <script>$.endlessPaginate({paginateOnScroll: true});</script>
-				{% endblock %}
-		    
-		    </ul>
-		{% else %}
-		    <p>No projects are available.</p>
-		{% endif %}
+{% load static %}
+	<div id="content" class="container">
+	
+		<div class="project_header">
+			<h1>Projekte</h1><div class="clear"></div>
+			<a href="/projects/add/"><span>neues Projekt</span></a>
+		</div>
+		<div class="clear"></div>
+		<div id="project_list">
+			{% if project_list %}
+			    <ul>		
+				    {% load endless %}
+					{% paginate project_list %}
+				    {% for project in project_list %}
+						<a href="/projects/{{ project.id }}/">
+			        		<li class='project_item'>
+			        			<div class='project_item_text'>
+										<strong>{{project.name}}</strong> - {{project.owner.user.username}}
+			        			</div>
+				        		<div class="project_members">
+									{% for member in project.slots %}
+										<div class="project_member">
+											<div class="color_box rct_10_22" data-color="{{member.skillset.color}}"></div>
+											<span{% if member.user %} class="closed"{% endif %}>{{member.name}}</span>
+											<div class="project_slots">
+												{% for skill in member.skillset.skills %}
+													{% if skill %}
+														<div class="project_slot" data-skill_id="{{skill.id}}" data-slot="{{forloop.counter0}}">
+															{% static "img/skills/"|add:skill.image_name as skill_image %}
+															<img src="{{skill_image}}" alt="{{skill.name}}" >
+														</div>
+													{% else %} 
+														<div class="project_slot" data-skill_id="0" data-slot="{{forloop.counter0}}">
+															{% static "img/open_small.png" as skill_image %}
+															<img src="{{skill_image}}" alt="open" >
+														</div>
+													{% endif %}
+												{% endfor %}
+											</div>
+										</div>
+									{% endfor %}
+								</div>
+				        	</li>
+				        </a>
+					{% endfor %}
+					<div class="pagination">
+						{% show_pages %}
+					</div>
+			    </ul>
+			{% else %}
+			    <p>Keine Projekte verf&uuml;gbar.</p>
+			{% endif %}
+		</div>
 	</div>
 {% endblock %}

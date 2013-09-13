@@ -1,7 +1,7 @@
 $('.appl_approve').click(function() {
 	console.log("approve");
 	
-	var application_id = $(this).parent().parent().data('id');
+	var application_id = $(this).parent().parent().parent().data('id');
 	console.log(application_id);
 	var jsonString = JSON.stringify(application_id)
 	
@@ -24,7 +24,7 @@ $('.appl_approve').click(function() {
 $('.appl_decline').click(function() {
 	console.log("decline");
 	
-	var application_id = $(this).parent().parent().data('id');
+	var application_id = $(this).parent().parent().parent().data('id');
 	console.log(application_id);
 	var jsonString = JSON.stringify(application_id)
 	

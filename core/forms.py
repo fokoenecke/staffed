@@ -8,6 +8,7 @@ class UserForm(forms.ModelForm):
         fields = ["username", "email"]
 
 class UserProfileForm(forms.ModelForm):
+    avatar = forms.ImageField(required=False, widget=forms.FileInput)
     class Meta:
         model = UserProfile
-        fields = ["matriculation_nr", "first_name", "last_name", "studies"]
+        fields = ["first_name", "last_name", "studies", "avatar"]

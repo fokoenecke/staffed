@@ -1,6 +1,6 @@
 $('#project_form').submit(function(){
 	var $ajaxData = $('#project_form').serializeArray();
-	$ajaxData.push({name: 'slot_list', value: createSlotString()});
+	$ajaxData.push({name: 'member_list', value: createMemberString()});
 	$ajaxData.push({name: 'project_id', value: $('#project_form').data('id')});
 	console.log($ajaxData);
 	
@@ -14,65 +14,65 @@ $('#project_form').submit(function(){
 				$('#error').text(msg.error);
 				$('#error').show();
 			}
-            if (msg.return === 'true') {
-				window.location.reload();
+			if (msg.return === 'true') {
+				console.log("redirect");
+				window.location = "/projects/" + msg.project_id;
 			}
         }
     });
 	return false;
 });
 
-function createSlotString() {
+function createMemberString() {
 	  
-	var slots = [];
-	var $slots = $('.slot');
-	$('.slot').each(function() {
+	var members = [];
+	$('.member').each(function() {
 		
-		var slot = new Object();
-		slot.id = $(this).data('id');
-		slot.skills = [];
+		var member = new Object();
+		member.id = $(this).data('id');
+		member.slots = [];
 		
-		$(this).find('.skillset_slot').each(function() {
-			var skill = new Object();
-			skill.id = $(this).data('skill_id');
-			skill.slot = $(this).data('slot');
-			slot.skills.push(skill);
+		$(this).find('.slot').each(function() {
+			var slot = new Object();
+			slot.id = $(this).data('skill_id');
+			slot.slot = $(this).data('slot');
+			member.slots.push(slot);
 		})
 		
-		slot.name = $(this).find('input').val();
-		slot.desc = $(this).find('textarea').val();
+		member.name = $(this).find('input').val();
+		member.desc = $(this).find('textarea').val();
 		
-		slots.push(slot);
+		members.push(member);
 	});	
 	
-	var jsonString = JSON.stringify(slots);	  
+	var jsonString = JSON.stringify(members);	  
 	return jsonString;
 }
 
 
-var $str = "<div class=\"slot\">";
-$str += "<div class=\"slot_info\">"
-$str += "<input></input><br />"
-$str += "<textarea rows=\"\" cols=\"\"></textarea>"
+var $str = "<div class=\"member\">";
+$str += "<div class=\"member_info\">"
+$str += "<label>Bezeichnung:</label><input></input><br />"
+$str += "<label>Beschreibung:</label><textarea rows=\"3\" cols=\"60\"></textarea>"
 $str += "</div>"
-$str += "<div class=\"slot_skills\">"	
+$str += "<div class=\"slots\">"	
 for (var i=0; i<5; i++) {
-	$str += "<div class=\"skillset_slot\" data-skill_id=0 data-slot="+i+">"
+	$str += "<div class=\"slot\" data-slot=\""+i+"\">"
 	$str += "<img src=\"/static/img/open.png\" alt=\"open\">"
-	$str += "Test</div>"
+	$str += "<span>offen</span></div>"
 }
 $str += "</div>"
 $str += "</div>"
 
-$('#add_slot').click(function() {
+$('.add_slot').click(function() {
 	console.log("test");
-	$('#skill_slots').append($str);	
+	$('#member_slots').append($str);	
 	makeDroppable();
 });
 
 function makeDroppable() {
-    $('.skillset_slot').droppable( {
-        accept: $( "img", $("#skills")),
+    $('.slot img').droppable( {
+        accept: $( ".drag", $( ".skill", $("#slider") ) ),
         hoverClass: 'hovered',
         drop: project_assign_skill
     });
@@ -81,15 +81,21 @@ function makeDroppable() {
 function project_assign_skill( event, ui ){
 	var skill_id = ui.draggable.data( 'id' );
 	console.log(skill_id);
-    var $img = $(this).find('img');
+    var $img = $(this);
     
-    $(this).html(ui.draggable.data( 'name' ));
-    $(this).append($img);
+    $slot = $(this).parent();
+    $slot.find('span').html("");
+    $slot.find('span').html(ui.draggable.data( 'name' ));
+    $slot.data('skill_id', skill_id);
+    
+	var img_src = ui.draggable.find('img').attr('src');
+	var path = img_src.substring(0, img_src.lastIndexOf("/"));
+	var file = img_src.substring(img_src.lastIndexOf("/"));
 	
-	console.log(ui.draggable.attr('src'));
-	console.log($(this).find('img'));
-	$(this).find('img').attr('src', ui.draggable.attr('src'));
-	$(this).data('skill_id', skill_id);
+	
+	console.log(path + "/64" + file);
+	$(this).attr('src', path + "/64" + file);
+	
 }
 
 $(function() {

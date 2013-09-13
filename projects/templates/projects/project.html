@@ -1,52 +1,84 @@
 {% extends "core/base.html" %}
 {% block content %}
-	<div id="hello">
-		<div id="project_box">
-			<div id="project_info">
-				<span>Owner : 		        
-				<a href="/profile/{{ project.owner.id }}/">
-	        		{{project.owner.user.username}}
-	        	</a></span><br \>       
-				<span>Name: {{project.name}}</span><br \>
-				<span>Start: {{project.start_date}}</span><br \>
-				<span>Ende: {{project.end_date}}</span><br \>
-			</div>
+    {% load static %}
+    {% load thumbnail %}
+	<div id="content" class="container">
+	
+		<div class="project_header">
+			<h1>Projekt - {{ project.name }}</h1><div class="clear"></div>
+			{% if project.owner.user = user %}<a href='/projects/edit/{{project.id}}'>Projekt bearbeiten</a>{% endif %}
 		</div>
-		<div id='skill_slots'>
-			{% load static %}
-			{% for slot in project.slots %}
-				<div class='slot' data-id='{{slot.id}}'>
-					<div class="slot_skills">
-						{% for skill in slot.skillset.skills %}
-							{% if skill %}
-								<div class='skill' data-id='{{skill.id}}' data-nr='{{forloop.counter0}}'>
-									{% static "img/"|add:skill.image_name as skill_image %}
-									<img src="{{skill_image}}" alt="{{skill.name}}" data-id="{{skill.id}}" data-name="{{skill.name}}" />
-								</div>
-							{% else %}
-								<div class='skill' data-id='0' data-nr='{{forloop.counter0}}'>
-									Skill
-									{% static "img/open.png" as skill_image %}
-									<img src="{{skill_image}}" alt="open" >
-								</div>
-							{% endif %}
-						{% endfor %}
-					</div>
-					<div class="slot_color" data-color="{{slot.skillset.color}}"></div>
-					<div class="apply">
-						apply
-					</div>
+		<div class="clear gap20"></div>
+		{% if messages %}
+			{% for message in messages %}
+				<div
+					{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}
 				</div>
 			{% endfor %}
-		</div>
-		
-		{% if project.owner.user == user %}
-			<div id="edit_project">
-				<a href="/projects/edit/{{project.id}}/">
-					edit project
-				</a>
-			</div>
 		{% endif %}
+		<div class="clear"></div>
+		<div id="project_box">    
+			<div id="project_info">
+				<span class="label">Projektleiter:</span><span class="text"><a href="/profile/{{project.owner.id}}/">{{project.owner.user.username}}</a></span><br \>
+				<span class="label">Beschreibung:</span><span class="text">{{project.description}}</span><br \>
+			</div>
+		</div>
+				
+		<div class="clear"></div>
+								
+		<div id="member_slots">
+			<div id="member_slots_header" class="inline_header">
+				<h3>Mitarbeiterslots</h3>
+			</div>
+			<div id="member_slots_content">
+				{% for member in project.slots %}
+					<div class="info_msg success">Du hast dich erfolgreich als <span></span> beworben!</div>
+					<div class='member' data-id='{{member.id}}'>
+						<div class="member_info">
+							<label>Bezeichnung:</label><span class="bez">{{member.name}}{% if member.user %}<span class="staffed"> - staffed!</span>{% endif %}</span><br/> 
+							<label>Beschreibung:</label><span>{{member.description}}</span>
+						</div>
+						<div class="clear gap_20"></div>
+						<div class="slots">
+							<div id="slots_color" class="color_box rct_16_64" data-color="{{member.skillset.color}}"></div>	
+							{% for skill in member.skillset.skills %}
+								{% if skill %}
+									<div class="slot" data-skill_id="{{skill.id}}" data-slot="{{forloop.counter0}}">
+										{% static "img/skills/64/"|add:skill.image_name as skill_image %}
+										<img src="{{skill_image}}" alt="{{skill.name}}" >
+										<span>{{skill.name}}</span>
+									</div>
+								{% else %} 
+									<div class="slot" data-skill_id="0" data-slot="{{forloop.counter0}}">
+										{% static "img/open.png" as skill_image %}
+										<img src="{{skill_image}}" alt="open" >
+										<span>(offen)</span>
+									</div>
+								{% endif %}
+							{% endfor %}
+						</div>
+						{% if not member.user %}
+							{% if not user.profile in member.applicants %}
+								<div class="apply">
+									<img src="{% static "img/apply.png" %}" alt="apply">
+									<span>apply</span>
+								</div>
+							{% endif %}
+						{% else %}
+							<div class="staffed_user">
+			        			{% if member.user.avatar %}
+				        			<img width="64" height="64" src="{% thumbnail member.user.avatar 64x64 crop %}" alt="" />
+			        			{% else %}
+			        				<img width="64" height="64" src="{% static "img/no_avatar_64.png" %}" alt="" />
+			        			{% endif %}
+			        			<span>{{member.user.user.username}}</span>
+							</div>
+						{% endif %}
+					</div>
+				{% endfor %}
+			</div>
+		</div>
 	</div>
+	<script src="{% static 'js/project_script.js' %}"></script>
 	<script src="{% static 'js/project_apply.js' %}"></script>
 {% endblock %}

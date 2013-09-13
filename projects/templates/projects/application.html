@@ -1,39 +1,61 @@
 {% extends "core/base.html" %}
 {% block content %}
-    {% load static %}
-	<div id="application_list">
-		{% if application_list %}
-		    <ul>
-			    {% load endless %}
-				{% paginate application_list %}
-			    {% for application in application_list %}
-	        	<li>
-	        		<div class="application" data-id="{{application.id}}">
-	        			{{application.created_at}}
-	        			<div>{{application.applicant.first_name}} {{ application.applicant.last_name }} als {{application.slot.name}} ({{application.slot.project.name}})
-	        				<div class="color_box" data-color="{{application.slot.skillset.color}}"></div>
-	        			</div>
-	        			
-	        			{% if application.accepted = None%}
-		        			<div>
-		        				<div class="appl_approve">accept</div>
-		        				<div class="appl_decline">decline</div>
-		        			</div>
-		        		{% else %}
-		        			{% if application.accepted %}
-		        				accepted
-		        			{% else %}
-		        				declined
-		        			{% endif %}
+{% load static %}
+	<div id="content" class="container">
+		<h1>Bewerbungen:</h1>
+		<div id="application_list">
+			{% if application_list %}
+			    <ul>
+			    	{% load thumbnail %}
+				    {% load endless %}
+					{% paginate application_list %}
+				    {% for application in application_list %}
+		        	<li>
+		        		<div class="application
+		        		{% if not application.accepted = None %}
+		        			{% if application.accepted %}accepted{% else %}declined{% endif %}
 		        		{% endif %}
-	        		</div>
-	        	</li>
-				{% endfor %}
-				{% show_pages %}
-		    </ul>
-		{% else %}
-		    <p>No applications are available.</p>
-		{% endif %}
-	</div>
+		        		" data-id="{{application.id}}">
+	      					<div class='application_images'>
+				        		<div class="color_box rct_14_50" data-color="{{application.applicant.skillset.color}}"></div>
+			        			<div class="color_box rct_14_50" data-color="{{application.slot.skillset.color}}"></div>
+			        			{% if application.applicant.avatar %}
+				        			<img width="50" height="50" src="{% thumbnail application.applicant.avatar 50x50 crop %}" alt="" />
+			        			{% else %}
+			        				<img width="50" height="50" src="{% static "img/no_avatar_50.png" %}" alt="" />
+			        			{% endif %}
+			        		</div>
+			        		<div class="application_info">
+			        			{{application.created_at|date:"d.m.Y"}} - <a href=/profile/{{application.applicant.id}}/>{{application.applicant.first_name}} {{ application.applicant.last_name }}</a> 
+			        			<div> als {{application.slot.name}} (<a href="/projects/{{application.slot.project.id}}">{{application.slot.project.name}}</a>)
+			        			</div>
+			        		</div>
+		        			
+		        			<div class="application_decisions">
+		        				{% if application.accepted = None %}
+				        			<div>
+				        				<div class="appl_approve">akzeptieren</div>
+				        				<div class="appl_decline">ablehnen</div>
+				        			</div>
+				        		{% else %}
+				        			{% if application.accepted %}
+				        				akzeptiert
+				        			{% else %}
+				        				abgelehnt
+				        			{% endif %}
+				        		{% endif %}
+		        			</div>
+
+		        		</div>
+		        	</li>
+					{% endfor %}
+					<div class="pagination">
+						{% show_pages %}
+					</div>
+			    </ul>
+			{% else %}
+			    <p>Keine Bewerbungen vorhanden.</p>
+			{% endif %}
+		</div>
 	<script src="{% static 'js/application_script.js' %}"></script>
 {% endblock %}

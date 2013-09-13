@@ -1,44 +1,43 @@
 {% extends "core/base.html" %}
 {% block content %}
-
-    {% load static %}
-	<div id="slot_list">
-		<div id="profile_finder">finde meine Skills</div>
-		{% if slot_list %}
+{% load static %}
+	{% include "core/slider.html" %}
+	<div id="content" class="container">
+		<div class="slot_header">
+			<h1>Gesuche</h1>
+			<div id="profile_finder">finde meine Skills</div>
+			<div class="skills_toggle">Skillpool &ouml;ffnen</div>
 			<div id="slot_filter">
-	    		<div id='skills'>
-					{% for skill in skill_list %}
-						{% static "img/"|add:skill.image_name as skill_image %}
-						<img src="{{skill_image}}" alt="{{skill.name}}" data-id="{{skill.id}}" data-name="{{skill.name}}" />
+				<div class="slot_skills">
+					<div id="skillset_color" class="color_box rct_16_64" data-color="{{skillset.color}}"></div>
+					{% for skill in skillset.skills %}
+						{% if skill %}
+							<div class="skillset_slot" data-skill_id="{{skill.id}}" data-slot="{{forloop.counter0}}">
+								{% static "img/64/skills/"|add:skill.image_name as skill_image %}
+								<img src="{{skill_image}}" alt="{{skill.name}}" >
+							</div>
+						{% else %} 
+							<div class="skillset_slot" data-skill_id="0" data-slot="{{forloop.counter0}}">
+								{% static "img/open.png" as skill_image %}
+								<img src="{{skill_image}}" alt="open" >
+							</div>
+						{% endif %}
 					{% endfor %}
 				</div>
-				<div id="skill_slots">
-					<div class="slot">
-						<div class="slot_skills">
-							{% for skill in skillset.skills %}
-								{% if skill %}
-									<div class="skillset_slot" data-skill_id="{{skill.id}}" data-slot="{{forloop.counter0}}">
-										{{skill.name}}
-										{% static "img/"|add:skill.image_name as skill_image %}
-										<img src="{{skill_image}}" alt="{{skill.name}}" >
-									</div>
-								{% else %} 
-									<div class="skillset_slot" data-skill_id="0" data-slot="{{forloop.counter0}}">
-										Skill
-										{% static "img/open.png" as skill_image %}
-										<img src="{{skill_image}}" alt="open" >
-									</div>
-								{% endif %}
-							{% endfor %}
-						</div>
-						<div id="skillset_color" data-color="{{skillset.color}}"></div>
-					</div>
-				</div>
-	    	</div>
-			{% include "projects/slot_list_page.html" %}
-		{% else %}
-		    <p>No slots are available.</p>
-		{% endif %}
-		<script src="{% static 'js/slot_script.js' %}"></script>
+			</div>
+			<div class="clear"></div>
+			<span>Ziehe Skills aus dem Skillpool auf die freien Fl&aumlchen, um die Auswahl zu filtern.</span>
+		</div>
+		<div id="slot_list">
+			<div class="inline_header">
+				<h3>freie Stellen</h3>
+			</div>
+			{% if slot_list %}
+				{% include "projects/slot_list_page.html" %}
+			{% else %}
+			    <ul><p>Keine Gesuche verf&uuml;gbar.</p></ul>
+			{% endif %}
+		</div>
 	</div>
+	<script src="{% static 'js/slot_script.js' %}"></script>
 {% endblock %}

@@ -1,22 +1,59 @@
 {% extends "core/base.html" %}
 {% block content %}
-	<div id="profile_list">
-		{% if profile_list %}
-		    <ul>
-		    
-			    {% load endless %}
-				{% paginate profile_list %}
-			    {% for profile in profile_list %}
-		        <a href="/profile/{{ profile.id }}/">
-		        	<li>
-		        		{{profile.first_name}} {{ profile.last_name }} <div class="color_box" data-color="{{profile.skillset.color}}"></div>
-		        	</li>
-		        </a>
-				{% endfor %}
-				{% show_pages %}
-		    </ul>
-		{% else %}
-		    <p>No profiles are available.</p>
-		{% endif %}
+{% load static %}
+	<div id="content" class="container">
+		<h1>Profile</h1>
+		<div id="profile_list">
+			{% if profile_list %}
+			    <ul>		
+			    	{% load thumbnail %}
+				    {% load endless %}
+					{% paginate profile_list %}
+				    {% for profile in profile_list %}
+			        	<li>
+					        <a href="/profile/{{ profile.id }}/">
+				        		<div class='profile_item'>
+				        			<div class='profile_item_text'>
+				        				{% if profile.first_name or profile.last %}
+				        					{{profile.first_name}} {{ profile.last_name }}
+				        				{% else %}
+				        					Unknown
+				        				{% endif%}
+				        			</div>
+									<div class='profile_item_images'>
+						        		<div class="color_box rct_14_50" data-color="{{profile.skillset.color}}"></div>
+					        			{% if profile.avatar %}
+						        			<img width="50" height="50" src="{% thumbnail profile.avatar 50x50 crop %}" alt="" />
+					        			{% else %}
+					        				<img width="50" height="50" src="{% static "img/no_avatar_50.png" %}" alt="" />
+					        			{% endif %}
+					        		</div>
+					        		<div class="profile_slots">
+										{% for skill in profile.skillset.skills %}
+											{% if skill %}
+												<div class="profile_slot" data-skill_id="{{skill.id}}" data-slot="{{forloop.counter0}}">
+													{% static "img/skills/"|add:skill.image_name as skill_image %}
+													<img src="{{skill_image}}" alt="{{skill.name}}" >
+												</div>
+											{% else %} 
+												<div class="profile_slot" data-skill_id="0" data-slot="{{forloop.counter0}}">
+													{% static "img/open_small.png" as skill_image %}
+													<img src="{{skill_image}}" alt="open" >
+												</div>
+											{% endif %}
+										{% endfor %}
+									</div>
+				        		</div>
+					        </a>
+			        	</li>
+					{% endfor %}
+					<div class="pagination">
+						{% show_pages %}
+					</div>
+			    </ul>
+			{% else %}
+			    <p>Keine Profile verf&uuml;gbar.</p>
+			{% endif %}
+		</div>
 	</div>
 {% endblock %}

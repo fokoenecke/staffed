@@ -7,6 +7,7 @@ from django.shortcuts import render, get_object_or_404
 from django.utils import simplejson
 from django.views.decorators.csrf import ensure_csrf_cookie
 from projects.models import Application
+from django.contrib import messages
 import logging
 
 @ensure_csrf_cookie
@@ -41,8 +42,24 @@ def ajax_logout(request):
 
 @ensure_csrf_cookie
 def profile(request):
+
+    logger = logging.getLogger("django")
+    data = {}
     
+    logger.error(request.method)
     if request.user.is_authenticated():
+        if request.method == 'POST':
+            logger.error(request.FILES)
+            profile_form = UserProfileForm(data=request.POST, files=request.FILES, instance=request.user.profile)
+            logger.error(profile_form)
+  
+            if profile_form.is_valid():
+                logger.error(profile_form)
+                profile_form.save()
+            else:
+                logger.error(profile_form.errors)
+                data['error'] = "invalid input"
+
         data = {}
         user_profile = request.user.profile
         skillset = user_profile.skillset
@@ -50,9 +67,11 @@ def profile(request):
          
         data['profile_form'] = UserProfileForm(instance=user_profile)
         data['skillset'] = skillset
+        
         data['applications'] = applications
         
         print user_profile
+            
         return render(request, 'core/profile.html', data)
     else:
         return index(request)
@@ -74,27 +93,9 @@ def pub_profile(request, profile_id):
         return index(request)
 
 @ensure_csrf_cookie
-def save_profile(request):
-    logger = logging.getLogger("django")
-    some_data = {'return': 'false'}
-    if request.method == 'POST':
-        logger.error("test")
-        profile_form = UserProfileForm(data=request.POST, instance=request.user.profile)
-        if profile_form.is_valid():
-            logger.error(profile_form)
-            profile_form.save()
-            some_data['return'] = 'true'
-        else:
-            logger.error(profile_form.errors)
-            some_data['error'] = "invalid input"
-    
-    data = simplejson.dumps(some_data)
-    return HttpResponse(data, content_type='application/json')
-
-@ensure_csrf_cookie
 def profile_list(request):
     if request.user.is_authenticated():
-        profile_list = UserProfile.objects.all().select_related()
+        profile_list = UserProfile.objects.all().select_related().order_by('first_name')
         context = {'profile_list': profile_list}
         return render(request, 'core/profile_list.html', context)
     else:
@@ -106,6 +107,8 @@ def register(request):
         form = UserCreationForm(request.POST)
         if form.is_valid():
             new_user = form.save()
+            messages.success(request, "Du wurdest erfolgreich unter dem Benutzernamen " + new_user.username + " registriert und kannst dich nun anmelden.")
+            
             return HttpResponseRedirect("/")
     else:
         form = UserCreationForm()
@@ -140,6 +143,7 @@ def get_color_code_from_skills(request):
     skills = jsn['skills']
     
     skillset = Skillset()
+    logger.error("SKILLS")
     logger.error(skills)
     for idx, skill in enumerate(skills):        
         if Skill.objects.filter(pk=skill['id']).exists():
@@ -160,7 +164,8 @@ def get_profile_skills(request):
     
     skill_list = []
     for skill in skills:
-        skill_list.append({"id": skill.id, "img": skill.image_name, "name": skill.name})
+        if skill:
+            skill_list.append({"id": skill.id, "img": skill.image_name, "name": skill.name})
     
     logger.error(skill_list)
     
@@ -168,3 +173,7 @@ def get_profile_skills(request):
     data = simplejson.dumps(some_data)
         
     return HttpResponse(data, mimetype='application/json')
+
+@ensure_csrf_cookie
+def test(request):
+    return render(request, "core/test.html")

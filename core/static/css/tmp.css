@@ -1,0 +1,171 @@
+
+#error {
+	color: red;
+}
+
+.fieldWrapper {
+	display: block;
+	float: left;
+	clear: both;
+}
+
+#login_fields {
+	float: right;
+}
+
+
+#login_box {
+	display:none;
+	float: right;
+    z-index:29;
+	
+	padding: 5px;
+	border: 1px solid #BF6F30;
+	background-color: #FFD1AC;
+}
+
+
+#skills {
+	display:block;
+	margin-top: 25px;
+	clear: both;
+	float: left;
+}
+ 
+.slot_skills {
+	clear: both;
+}
+
+.slot_skills div {
+  float: left;
+  width: 58px;
+  height: 78px;
+  padding: 10px;
+  padding-top: 40px;
+  padding-bottom: 0;
+  border: 2px solid #333;
+  -moz-border-radius: 10px;
+  -webkit-border-radius: 10px;
+  border-radius: 10px;
+  margin: 0 0 0 10px;
+  background: #fff;
+}
+ 
+.slot_skills div:first-child, #cardPile div:first-child {
+  margin-left: 0;
+}
+ 
+.slot_skills div.hovered {
+  background: #aaa;
+}
+ 
+.slot_skills div {
+  border-style: dashed;
+}
+
+#skillset_color, .slot_color {
+	opacity: 0.7;
+	margin: 20px;
+	float: left;
+	height: 50px;
+	width: 50px;
+	border: 1px solid black;
+	border-radius: 15px;
+}
+
+
+#profile_list, #slot_list {
+	border: 1px solid black;
+	width: 600px;
+	margin: auto;
+}
+
+#profile_list ul, #slot_list ul {
+	padding: 0;#
+	margin: 0;
+}
+
+#profile_list ul li, #slot_list ul li {
+	margin: 20px;
+	list-style-type: none;
+	border: 1px solid black;	
+	padding: 5px;
+}
+
+a:link {color:black;}      /* unvisited link */
+a:visited {color:black;}  /* visited link */
+a:hover {color:black;}  /* mouse over link */
+a:active {color:black;}  /* selected link */
+
+.color_box {
+	float: left;
+}
+
+.50 {
+	height: 50px;
+	width: 50px;
+}
+
+.30 {
+	height: 30px;
+	width: 30px;
+}
+
+
+#edit_project {
+	clear: both;
+}
+
+.slot_info {
+	float:left;
+	clear: both;
+}
+
+.high-div {
+	height: 100px;	
+	border: 1px solid black;
+}
+
+#slot_filter {
+	width: 100%;
+	margin-left : 50px;
+}
+
+.application {
+	width: 350px;
+	border: 1px solid grey;
+	padding-left: 20px;
+	margin: 5px;
+}
+
+.profile_item {
+	overflow:auto;
+}
+
+.profile_item_text {
+	float: left;
+}
+
+.profile_item_images {
+	margin:0;
+	padding:0;
+	float: right;
+}
+
+.profile_thumbnail {
+	margin:0;
+	padding:0;
+	float: left;
+}
+
+#logo {
+	float: left;
+}
+
+#nav {
+	float: right;
+}
+
+#links {
+	float: left;
+}

@@ -1,13 +1,33 @@
 {% extends "core/base.html" %}
-
 {% block title %}Create an account{% endblock %}
 
 {% block content %}
-  <h1>Create an account</h1>
-
-  <form action="" method="post">
- 	  {% csrf_token %}
-      {{ form.as_p }}
-      <input type="submit" value="Create the account">
-  </form>
+	<div id="content" class="container">
+		<h1>Registrierung</h1>
+		<p>W&auml;hle einen Benutzernamen und gib dein Passwort 2x ein.<br />
+		Danach wirst du auf die Startseite weitergeleitet und kannst dich einloggen.</p><br />
+		<form action="" method="post">
+			{% csrf_token %}
+			{{ form.non_field_errors }}
+			<div class="field_wrapper">
+				<label for="id_username">Benutzer:</label>
+				{{ form.username }}
+				{{ form.username.errors }}
+			</div>
+			
+			<div class="field_wrapper">
+	        	<label for="id_password1">Passwort:</label>
+	        	{{ form.password1 }}
+				{{ form.password1.errors }}
+	        </div>
+	        
+	        <div class="field_wrapper">
+	        	<label for="id_password2">Passwort(2):</label>
+	        	{{ form.password2 }}
+	        	{{ form.password2.errors }}
+	        </div>
+	        
+		    <input class='clear gap_20' type="submit" value="Registrieren" />
+		</form>
+	</div>
 {% endblock %}

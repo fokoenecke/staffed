@@ -1,11 +1,11 @@
 #http://www.easyrgb.com/
 from math import sqrt, pow
-import logging
 
-def rgb_difference(rgb1, rgb2): 
+def rgb_difference(rgb1, rgb2):
+        
     lab1 = rgb_to_lab(hex_to_rgb(rgb1))
     lab2 = rgb_to_lab(hex_to_rgb(rgb2))
-
+        
     return lab_difference(lab1, lab2)
 
 def hex_to_rgb(value):
@@ -76,7 +76,10 @@ def lab_difference(lab1, lab2):
     
     da = lab1[1] - lab2[1]
     db = lab1[2] - lab2[2]
-    dH = sqrt((pow(da, 2) + pow(db,2) - pow(dC,2)))
+    
+    tmp = pow(da, 2) + pow(db,2) - pow(dC,2)
+    tmp = max(0, tmp)
+    dH = sqrt(tmp)
     
     sec1 = pow((dL/KL), 2)
     sec2 = pow((dC / (1 + (K1 * c1))), 2)

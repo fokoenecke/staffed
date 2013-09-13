@@ -17,5 +17,4 @@ urlpatterns = patterns('',
     url(r'^applications/accept/$', views.apply_application, name='application_approve'),
     url(r'^applications/decline/$', views.decline_application, name='application_decline'),
     
-    
 )

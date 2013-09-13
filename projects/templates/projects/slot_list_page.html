@@ -1,14 +1,34 @@
-<div id='slots' style='clear:both'>
-    <ul>
-	    {% load endless %}
-		{% paginate slot_list %}
-	    {% for slot in slot_list %}
-        <a href="/projects/{{ slot.project.id }}/">
-        	<li>
-        		{{slot.name}} in {{slot.project.name}} <div class="color_box" data-color="{{slot.skillset.color}}"></div>
-        	</li>
-        </a>
-		{% endfor %}
+   <ul>		
+   	{% load thumbnail %}
+    {% load endless %}
+	{% paginate slot_list %}
+	{% load static %}
+    {% for slot in slot_list %}
+      	<a href="/projects/{{ slot.project.id }}/">
+       		<li class='slot_item'>
+       			<div class='slot_item_text'>
+      					<strong>{{slot.name}}</strong> in {{ slot.project.name }}
+       			</div>
+        		<div class="slot_slots">
+        		 	<div class="color_box rct_10_22" data-color="{{slot.skillset.color}}"></div>
+					{% for skill in slot.skillset.skills %}
+						{% if skill %}
+							<div class="slot_slot" data-skill_id="{{skill.id}}" data-slot="{{forloop.counter0}}">
+								{% static "img/skills/"|add:skill.image_name as skill_image %}
+								<img src="{{skill_image}}" alt="{{skill.name}}" >
+							</div>
+						{% else %} 
+							<div class="slot_slot" data-skill_id="0" data-slot="{{forloop.counter0}}">
+								{% static "img/open_small.png" as skill_image %}
+								<img src="{{skill_image}}" alt="open" >
+							</div>
+						{% endif %}
+					{% endfor %}
+				</div>
+       		</li>	
+       	</a>
+	{% endfor %}
+	<div class="pagination">
 		{% show_pages %}
-    </ul>
-</div>
+	</div>
+   </ul>
